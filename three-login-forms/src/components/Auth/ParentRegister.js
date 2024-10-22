@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { auth, db } from '../../firebaseConfig'; // Firebase Auth and Firestore
+import React, { useState } from 'react'; 
+import { auth, db } from '../../firebaseConfig'; 
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { setDoc, doc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 
 function ParentRegister() {
   const [parentName, setParentName] = useState('');
@@ -9,6 +12,8 @@ function ParentRegister() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  
+  const navigate = useNavigate(); // For navigation
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -19,11 +24,11 @@ function ParentRegister() {
 
     try {
       // Register user with Firebase Authentication
-      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
       // Save parent information in Firestore
-      await db.collection('parents').doc(user.uid).set({
+      await setDoc(doc(db, 'parents', user.uid), {
         parentName,
         studentName,
         studentUsn,
@@ -32,6 +37,7 @@ function ParentRegister() {
       });
 
       alert('Parent registration successful');
+      navigate('/parent-dashboard'); // Navigate to dashboard
     } catch (error) {
       alert(error.message);
     }

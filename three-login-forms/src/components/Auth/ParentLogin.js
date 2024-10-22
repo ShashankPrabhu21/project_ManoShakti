@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { auth } from '../../firebaseConfig'; // Import Firebase Auth
+import { auth } from '../../firebaseConfig'; 
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 function ParentLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await auth.signInWithEmailAndPassword(email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       alert('Parent login successful');
-      // Redirect or navigate to parent dashboard here
+      navigate('/parent-dashboard'); // Redirect to parent dashboard
     } catch (error) {
       alert(error.message);
     }

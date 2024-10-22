@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { auth } from '../../firebaseConfig'; // Import Firebase Auth
+import { auth } from '../../firebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 function CounselorLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await auth.signInWithEmailAndPassword(email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       alert('Counselor login successful');
-      // Redirect or navigate to counselor dashboard here
+      navigate('/counselor-dashboard'); // Redirect to counselor dashboard after login
     } catch (error) {
       alert(error.message);
     }

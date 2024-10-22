@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { auth, db } from '../../firebaseConfig'; // Firebase Auth and Firestore
+import { auth, db } from '../../firebaseConfig'; 
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { setDoc, doc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom'; 
 
 function CounselorRegister() {
   const [name, setName] = useState('');
@@ -7,6 +10,8 @@ function CounselorRegister() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -17,17 +22,18 @@ function CounselorRegister() {
 
     try {
       // Register user with Firebase Authentication
-      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
       // Save counselor information in Firestore
-      await db.collection('counselors').doc(user.uid).set({
+      await setDoc(doc(db, 'counselors', user.uid), {
         name,
         contact,
         email,
       });
 
       alert('Counselor registration successful');
+      navigate('/counselor-dashboard'); // Navigate to the counselor dashboard after registration
     } catch (error) {
       alert(error.message);
     }
