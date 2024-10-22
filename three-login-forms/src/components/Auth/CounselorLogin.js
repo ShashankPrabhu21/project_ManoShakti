@@ -1,21 +1,37 @@
 import React, { useState } from 'react';
-import { auth } from '../../firebaseConfig';
+import { auth, db } from '../../firebaseConfig'; // Firebase config
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore'; // Firestore functions
 import { useNavigate } from 'react-router-dom';
 
-function CounselorLogin() {
+function CounselorLogin({ handleAuthentication }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate(); // Hook for navigation
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError(''); // Reset error message
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert('Counselor login successful');
-      navigate('/CounselorDashboard'); // Redirect to counselor dashboard after login
+      // Sign in with email and password
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Check if user data exists in Firestore 'counselors' collection
+      const counselorRef = doc(db, 'counselors', user.uid);
+      const counselorSnapshot = await getDoc(counselorRef);
+
+      if (counselorSnapshot.exists()) {
+        // If user exists, trigger authentication and navigate to counselor dashboard
+        handleAuthentication(true, 'counselor');
+        navigate('/counselor-dashboard'); // Navigate to counselor dashboard
+      } else {
+        setError('No data found for this user.');
+      }
     } catch (error) {
-      alert(error.message);
+      setError(error.message);
     }
   };
 
@@ -28,15 +44,20 @@ function CounselorLogin() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         <button type="submit">Login</button>
       </form>
+
+      {/* Display error message */}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 }
