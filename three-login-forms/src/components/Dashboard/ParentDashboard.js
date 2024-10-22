@@ -1,39 +1,46 @@
+// src/components/Dashboard/ParentDashboard.js
 import React, { useEffect, useState } from 'react';
-import { auth, db } from '../../firebaseConfig';
+import { auth, db } from '../../firebaseConfig'; // Import your Firebase config
+import { doc, getDoc } from 'firebase/firestore';
 
 function ParentDashboard() {
   const [studentData, setStudentData] = useState(null);
+  const [error, setError] = useState(null);
+  const user = auth.currentUser; // Assuming you're using Firebase auth
 
   useEffect(() => {
-    // Fetch student's data based on parent's linked student ID
     const fetchStudentData = async () => {
-      const parentId = auth.currentUser.uid;
-      const parentRef = db.collection('parents').doc(parentId);
-      const parentSnapshot = await parentRef.get();
-      if (parentSnapshot.exists) {
-        const { studentId } = parentSnapshot.data();
-        const studentRef = db.collection('students').doc(studentId);
-        const studentSnapshot = await studentRef.get();
-        if (studentSnapshot.exists) {
-          setStudentData(studentSnapshot.data());
+      if (user) {
+        const studentRef = doc(db, 'students', user.uid); // Assuming 'uid' is the student ID
+        try {
+          const studentDoc = await getDoc(studentRef);
+          if (studentDoc.exists()) {
+            setStudentData(studentDoc.data());
+          } else {
+            setError('No student data found.');
+          }
+        } catch (err) {
+          setError(err.message);
         }
+      } else {
+        setError('User not authenticated.');
       }
     };
 
     fetchStudentData();
-  }, []);
+  }, [user]);
 
   return (
     <div>
-      <h2>Parent Dashboard</h2>
-      {studentData && (
+      <h1>Parent Dashboard</h1>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {studentData ? (
         <div>
-          <h3>Student: {studentData.name}</h3>
-          {/* Display the student's form submissions */}
-          <p><strong>ADHD Form:</strong> {JSON.stringify(studentData.forms.adhd)}</p>
-          <p><strong>DASS Form:</strong> {JSON.stringify(studentData.forms.dass)}</p>
-          <p><strong>FOMO Form:</strong> {JSON.stringify(studentData.forms.fomo)}</p>
+          <h2>Student Information</h2>
+          {/* Render student data */}
         </div>
+      ) : (
+        <p>Loading...</p>
       )}
     </div>
   );

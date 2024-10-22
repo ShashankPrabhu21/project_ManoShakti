@@ -1,8 +1,10 @@
+// src/components/Home/Navbar.js
+
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './Navbar.css';
+import './Navbar.css'; // Make sure to import your CSS
 
-function Navbar() {
+function Navbar({ authenticated, onLogout }) {
     return (
         <header>
             <div className="navbar">
@@ -17,11 +19,16 @@ function Navbar() {
                     <li className="dropdown">
                         <Link to="#">Login</Link>
                         <div className="dropdown-content">
-                            <Link to="/login/student">Student</Link>
-                            <Link to="/login/admin">Admin</Link>
-                            <Link to="/login/parent">Parent</Link>
+                            <Link to="/login/student">Student Login</Link>
+                            <Link to="/login/parent">Parent Login</Link>
+                            <Link to="/login/counselor">Counselor Login</Link>
                         </div>
                     </li>
+                    {authenticated && (
+                        <li>
+                            <button onClick={onLogout}>Logout</button> {/* Add logout button */}
+                        </li>
+                    )}
                 </ul>
             </div>
         </header>

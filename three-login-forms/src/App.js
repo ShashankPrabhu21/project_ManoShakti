@@ -1,83 +1,77 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+// src/App.js
+
+import React, { useState } from 'react';  
+import { BrowserRouter as Route, Routes, Navigate } from 'react-router-dom';
 import './App.css';
 
-import StudentLogin from './components/Auth/StudentLogin';
-import ParentLogin from './components/Auth/ParentLogin';
-import CounselorLogin from './components/Auth/CounselorLogin';
+import Home from './components/Home/Home'; 
+import About from './components/About'; 
+import Services from './components/Services'; 
+import Contact from './components/contact'; 
 
-import StudentRegister from './components/Auth/StudentRegister';
+import StudentLogin from './components/Auth/StudentLogin'; 
+import ParentLogin from './components/Auth/ParentLogin'; 
+import CounselorLogin from './components/Auth/CounselorLogin'; 
+
+import StudentRegister from './components/Auth/StudentRegister'; // Import Registration Components
 import ParentRegister from './components/Auth/ParentRegister';
 import CounselorRegister from './components/Auth/CounselorRegister';
 
-import StudentDashboard from './components/Dashboard/StudentDashboard';
-import ParentDashboard from './components/Dashboard/ParentDashboard';
-import CounselorDashboard from './components/Dashboard/CounselorDashboard';
+import StudentDashboard from './components/Dashboard/StudentDashboard'; 
+import ParentDashboard from './components/Dashboard/ParentDashboard'; 
+import CounselorDashboard from './components/Dashboard/CounselorDashboard'; 
+
+import Navbar from './components/Home/Navbar'; 
+import Footer from './components/Home/Footer'; 
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
-  const [userType, setUserType] = useState(''); // Track the logged-in user type (student, parent, or counselor)
-  const [isLogin, setIsLogin] = useState(true); // Toggle between login and register
-  const [selectedForm, setSelectedForm] = useState('student'); // Track which form (student, parent, or counselor)
+  const [userType, setUserType] = useState('');
 
   const handleAuthentication = (authStatus, type) => {
     setAuthenticated(authStatus);
     setUserType(type);
   };
 
+  const handleLogout = () => {
+    // Implement logout logic (e.g., signOut from Firebase)
+    setAuthenticated(false);
+    setUserType('');
+  };
+
   return (
-    <div className="App">
-      <h1>Login Portal</h1>
+    
+      <div className="App">
+        <Navbar authenticated={authenticated} onLogout={handleLogout} /> {/* Pass props to Navbar */}
+        <div className="main-content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/contact" element={<Contact />} />
 
-      {/* Toggle between Login and Register */}
-      <div className="toggle-buttons">
-        <button onClick={() => setIsLogin(true)}>Login</button>
-        <button onClick={() => setIsLogin(false)}>Register</button>
+            {/* Login Routes */}
+            <Route path="/login/student" element={<StudentLogin handleAuthentication={handleAuthentication} />} />
+            <Route path="/login/parent" element={<ParentLogin handleAuthentication={handleAuthentication} />} />
+            <Route path="/login/counselor" element={<CounselorLogin handleAuthentication={handleAuthentication} />} />
+
+            {/* Registration Routes */}
+            <Route path="/register/student" element={<StudentRegister />} />
+            <Route path="/register/parent" element={<ParentRegister />} />
+            <Route path="/register/counselor" element={<CounselorRegister />} />
+
+            {/* Dashboard Routes */}
+            <Route path="/student-dashboard" element={authenticated && userType === 'student' ? <StudentDashboard /> : <Navigate to="/" />} />
+            <Route path="/parent-dashboard" element={authenticated && userType === 'parent' ? <ParentDashboard /> : <Navigate to="/" />} />
+            <Route path="/counselor-dashboard" element={authenticated && userType === 'counselor' ? <CounselorDashboard /> : <Navigate to="/" />} />
+
+            {/* Catch-all route */}
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </div>
+        <Footer /> 
       </div>
-
-      {/* Toggle between Student, Parent, and Counselor */}
-      <div className="user-type-buttons">
-        <button onClick={() => setSelectedForm('student')}>Student</button>
-        <button onClick={() => setSelectedForm('parent')}>Parent</button>
-        <button onClick={() => setSelectedForm('counselor')}>Counselor</button>
-      </div>
-
-      {/* Render either Login or Register form based on toggle and user type */}
-      {isLogin ? (
-        selectedForm === 'student' ? (
-          <StudentLogin handleAuthentication={handleAuthentication} />
-        ) : selectedForm === 'parent' ? (
-          <ParentLogin handleAuthentication={handleAuthentication} />
-        ) : (
-          <CounselorLogin handleAuthentication={handleAuthentication} />
-        )
-      ) : (
-        selectedForm === 'student' ? (
-          <StudentRegister />
-        ) : selectedForm === 'parent' ? (
-          <ParentRegister />
-        ) : (
-          <CounselorRegister />
-        )
-      )}
-
-      <Routes>
-        {/* Dashboard Routes */}
-        <Route
-          path="/student-dashboard"
-          element={authenticated && userType === 'student' ? <StudentDashboard /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/parent-dashboard"
-          element={authenticated && userType === 'parent' ? <ParentDashboard /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/counselor-dashboard"
-          element={authenticated && userType === 'counselor' ? <CounselorDashboard /> : <Navigate to="/" />}
-        />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    </div>
+    
   );
 }
 

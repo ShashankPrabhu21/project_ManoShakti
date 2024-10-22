@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { auth, db } from '../../firebaseConfig'; // Import your Firebase config
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore'; // Firestore functions
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function StudentLogin({ handleAuthentication }) {
   const [email, setEmail] = useState('');
@@ -60,6 +60,9 @@ function StudentLogin({ handleAuthentication }) {
 
       {/* Display error message */}
       {error && <p style={{ color: 'red' }}>{error}</p>}
+       <p>
+        New here? <Link to="/register/student">Register as a Student</Link>
+      </p>
     </div>
   );
 }

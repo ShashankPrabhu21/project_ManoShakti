@@ -1,0 +1,12 @@
+/* src/components/Footer.css */
+footer {
+    background-color: #333; /* Same as navbar background */
+    color: white; /* Footer text color */
+    text-align: center;
+    padding: 1rem 0; /* Padding for top and bottom */
+    position: fixed; /* Fixes the footer to the bottom */
+    left: 0; /* Aligns footer to the left */
+    bottom: 0; /* Positions it at the bottom of the page */
+    width: 100%; /* Ensures footer spans the entire width */
+    z-index: 1000; /* Ensures footer is above other elements */
+}

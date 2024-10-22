@@ -1,0 +1,84 @@
+/* src/components/Home/Navbar.css */
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #333; /* Same background color */
+    color: white; /* Text color */
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+}
+
+.nav-menu {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-menu li {
+    position: relative; /* Necessary for positioning the dropdown */
+    margin: 0 1rem;
+}
+
+.nav-menu li a {
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    transition: background 0.3s;
+}
+
+.nav-menu li a:hover {
+    background-color: #7c7c7c; /* Change background on hover */
+}
+
+.dropdown-content {
+    display: none; /* Hidden by default */
+    position: absolute;
+    background-color: rgb(69, 74, 77); /* Dropdown background color */
+    min-width: 120px; /* Set width for dropdown */
+    z-index: 1; /* Ensure dropdown appears above other elements */
+    border: 1px solid #000000; /* Optional border */
+    padding: 0.5rem 0; /* Add padding for spacing */
+    border-radius: 4px; /* Optional rounded corners */
+}
+
+.dropdown:hover .dropdown-content {
+    display: block; /* Show dropdown on hover */
+}
+
+.dropdown-content a {
+    color: white; /* Dropdown text color */
+    padding: 0.5rem 1rem; /* Smaller padding for a smaller appearance */
+    text-decoration: none;
+    display: block; /* Make links stack vertically */
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1; /* Change dropdown link background on hover */
+    color: black; /* Change text color on hover */
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .nav-menu {
+        flex-direction: column; /* Stack links vertically */
+    }
+
+    .nav-menu li {
+        margin: 0.5rem 0; /* Space out links */
+    }
+
+    .dropdown-content {
+        left: 0; /* Align dropdown to the left */
+        right: 0; /* Align dropdown to the right */
+    }
+}

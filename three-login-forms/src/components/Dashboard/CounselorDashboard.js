@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../../firebaseConfig';
+import { collection, getDocs } from 'firebase/firestore'; // Modular Firestore functions
 
 function CounselorDashboard() {
   const [students, setStudents] = useState([]);
@@ -7,8 +8,9 @@ function CounselorDashboard() {
   useEffect(() => {
     // Fetch all students from Firestore
     const fetchStudents = async () => {
-      const studentSnapshot = await db.collection('students').get();
-      setStudents(studentSnapshot.docs.map(doc => doc.data()));
+      const studentsCollection = collection(db, 'students'); // Get the 'students' collection reference
+      const studentSnapshot = await getDocs(studentsCollection); // Get all documents in the collection
+      setStudents(studentSnapshot.docs.map(doc => doc.data())); // Map through the documents and get the data
     };
 
     fetchStudents();
@@ -28,9 +30,10 @@ function CounselorDashboard() {
             <p><strong>Contact:</strong> {student.contact}</p>
             <p><strong>Email:</strong> {student.email}</p>
             <h4>Forms:</h4>
-            <p><strong>ADHD Form:</strong> {JSON.stringify(student.forms.adhd)}</p>
-            <p><strong>DASS Form:</strong> {JSON.stringify(student.forms.dass)}</p>
-            <p><strong>FOMO Form:</strong> {JSON.stringify(student.forms.fomo)}</p>
+            {/* Check if the forms object exists and contains adhd, dass, and fomo */}
+            <p><strong>ADHD Form:</strong> {student.forms?.adhd ? JSON.stringify(student.forms.adhd) : 'Not submitted'}</p>
+            <p><strong>DASS Form:</strong> {student.forms?.dass ? JSON.stringify(student.forms.dass) : 'Not submitted'}</p>
+            <p><strong>FOMO Form:</strong> {student.forms?.fomo ? JSON.stringify(student.forms.fomo) : 'Not submitted'}</p>
             <hr />
           </div>
         ))
