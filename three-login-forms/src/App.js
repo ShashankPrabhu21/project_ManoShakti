@@ -1,7 +1,7 @@
 // src/App.js
 
 import React, { useState } from 'react';  
-import { BrowserRouter as Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import './App.css';
 
 import Home from './components/Home/Home'; 
@@ -40,7 +40,7 @@ function App() {
   };
 
   return (
-    
+     <Router>
       <div className="App">
         <Navbar authenticated={authenticated} onLogout={handleLogout} /> {/* Pass props to Navbar */}
         <div className="main-content">
@@ -71,7 +71,7 @@ function App() {
         </div>
         <Footer /> 
       </div>
-    
+    </Router>
   );
 }
 
