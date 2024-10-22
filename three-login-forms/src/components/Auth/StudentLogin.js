@@ -1,34 +1,39 @@
 import React, { useState } from 'react';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { db } from '../../firebaseConfig'; // Import db from firebaseConfig
-import { doc, getDoc } from 'firebase/firestore'; // Import functions for Firestore
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import "../login.css"
-function StudentLogin() {
+import { auth, db } from '../../firebaseConfig'; // Import your Firebase config
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore'; // Firestore functions
+import { useNavigate } from 'react-router-dom';
+
+function StudentLogin({ handleAuthentication }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const auth = getAuth(); // Initialize Firebase Auth
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [error, setError] = useState('');
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError(''); // Reset error message
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert('Student login successful');
+      // Sign in with email and password
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-      // Use doc and getDoc to access Firestore
-      const studentDocRef = doc(db, 'students', auth.currentUser.uid); // Use current user ID
-      const docSnap = await getDoc(studentDocRef);
+      // Check if user data exists in Firestore 'students' collection
+      const studentRef = doc(db, 'students', user.uid);
+      const studentSnapshot = await getDoc(studentRef);
 
-      if (docSnap.exists()) {
-        console.log('Student data:', docSnap.data());
-        navigate('/student-dashboard'); // Navigate to the student dashboard
+      if (studentSnapshot.exists()) {
+        // If user exists, trigger authentication and navigate to student dashboard
+        handleAuthentication(true, 'student');
+        navigate('/student-dashboard'); // Navigate to the dashboard
       } else {
-        console.log('No such student document!');
+        // If user data doesn't exist, show error
+        setError('No data found for this user. Please contact support.');
       }
     } catch (error) {
-      alert(error.message);
+      // Display any login error
+      setError(error.message);
     }
   };
 
@@ -41,15 +46,20 @@ function StudentLogin() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         <button type="submit">Login</button>
       </form>
+
+      {/* Display error message */}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 }

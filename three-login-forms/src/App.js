@@ -1,50 +1,51 @@
 import React, { useState } from 'react';
-import './App.css'; // Importing the CSS file
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import './App.css';
+
 import StudentLogin from './components/Auth/StudentLogin';
 import CounselorLogin from './components/Auth/CounselorLogin';
 import ParentLogin from './components/Auth/ParentLogin';
-import StudentRegister from './components/Auth/StudentRegister'; // Assuming this exists
-import ParentRegister from './components/Auth/ParentRegister';   // Assuming this exists
-import CounselorRegister from './components/Auth/CounselorRegister'; // Assuming this exists
+import StudentRegister from './components/Auth/StudentRegister';
+import ParentRegister from './components/Auth/ParentRegister';
+import CounselorRegister from './components/Auth/CounselorRegister';
 
- 
+import StudentDashboard from './components/Dashboard/StudentDashboard';
+import ParentDashboard from './components/Dashboard/ParentDashboard';
+import CounselorDashboard from './components/Dashboard/CounselorDashboard';
 
 function App() {
-  const [selectedForm, setSelectedForm] = useState('student'); // State to manage form selection
-  const [isLogin, setIsLogin] = useState(true); // State to toggle between login and registration
+  const [authenticated, setAuthenticated] = useState(false);
+  const [userType, setUserType] = useState('');
+
+  const handleAuthentication = (authStatus, type) => {
+    setAuthenticated(authStatus);
+    setUserType(type);
+  };
 
   return (
     <div className="App">
       <h1>Login Portal</h1>
-      
-      {/* Toggle between Login and Register */}
-      <div>
-        <button onClick={() => setIsLogin(true)}>Login</button>
-        <button onClick={() => setIsLogin(false)}>Register</button>
-      </div>
 
-      <div>
-        {/* Toggle between Student, Counselor, and Parent */}
-        <button onClick={() => setSelectedForm('student')}>Student</button>
-        <button onClick={() => setSelectedForm('counselor')}>Counselor</button>
-        <button onClick={() => setSelectedForm('parent')}>Parent</button>
-      </div>
-
-      {/* Login or Register Forms Based on Toggle */}
-      {isLogin ? (
-        <div>
-          {selectedForm === 'student' && <StudentLogin />}
-          {selectedForm === 'counselor' && <CounselorLogin />}
-          {selectedForm === 'parent' && <ParentLogin />}
-        </div>
-      ) : (
-        <div>
-          {selectedForm === 'student' && <StudentRegister />}
-          {selectedForm === 'counselor' && <CounselorRegister />}
-          {selectedForm === 'parent' && <ParentRegister />}
-        </div>
-      )}
- 
+      <Routes>
+        <Route
+          path="/"
+          element={<StudentLogin handleAuthentication={handleAuthentication} />}
+        />
+        {/* Only show dashboard if authenticated */}
+        <Route
+          path="/student-dashboard"
+          element={authenticated && userType === 'student' ? <StudentDashboard /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/parent-dashboard"
+          element={authenticated && userType === 'parent' ? <ParentDashboard /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/counselor-dashboard"
+          element={authenticated && userType === 'counselor' ? <CounselorDashboard /> : <Navigate to="/" />}
+        />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
     </div>
   );
 }

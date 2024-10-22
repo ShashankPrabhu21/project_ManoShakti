@@ -13,7 +13,7 @@ function CounselorLogin() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       alert('Counselor login successful');
-      navigate('/counselor-dashboard'); // Redirect to counselor dashboard after login
+      navigate('/CounselorDashboard'); // Redirect to counselor dashboard after login
     } catch (error) {
       alert(error.message);
     }

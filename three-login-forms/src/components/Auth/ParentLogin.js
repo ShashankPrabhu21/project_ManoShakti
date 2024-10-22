@@ -13,7 +13,8 @@ function ParentLogin() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       alert('Parent login successful');
-      navigate('/parent-dashboard'); // Redirect to parent dashboard
+      navigate('/ParentDashboard');
+       // Redirect to parent dashboard
     } catch (error) {
       alert(error.message);
     }
