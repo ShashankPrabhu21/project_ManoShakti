@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'; // Firebase Auth
-import { db } from '../../firebaseConfig'; // Firebase Firestore
-import { doc, setDoc } from 'firebase/firestore'; // Import Firestore functions
+import { Box, Button, TextField, Typography } from '@mui/material';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { db } from '../../firebaseConfig';
+import { doc, setDoc } from 'firebase/firestore';
 
 function StudentRegister() {
   const [email, setEmail] = useState('');
@@ -15,7 +16,7 @@ function StudentRegister() {
   const [weight, setWeight] = useState('');
   const [contact, setContact] = useState('');
 
-  const auth = getAuth(); // Initialize Auth
+  const auth = getAuth();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -28,8 +29,7 @@ function StudentRegister() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Save the user's additional information to Firestore
-      await setDoc(doc(db, 'students', user.uid), { // Change 'student' to 'students' if needed
+      await setDoc(doc(db, 'students', user.uid), {
         name,
         usn,
         branch,
@@ -42,28 +42,52 @@ function StudentRegister() {
 
       alert('Registration successful');
     } catch (error) {
-      console.error("Error registering user:", error); // Log the error for debugging
+      console.error("Error registering user:", error);
       alert(error.message);
     }
   };
 
   return (
-    <div>
-      <h2>Student Register</h2>
-      <form onSubmit={handleRegister}>
-        <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-        <input type="text" placeholder="USN" value={usn} onChange={(e) => setUsn(e.target.value)} />
-        <input type="text" placeholder="Branch" value={branch} onChange={(e) => setBranch(e.target.value)} />
-        <input type="text" placeholder="Section" value={section} onChange={(e) => setSection(e.target.value)} />
-        <input type="number" placeholder="Age" value={age} onChange={(e) => setAge(e.target.value)} />
-        <input type="number" placeholder="Weight" value={weight} onChange={(e) => setWeight(e.target.value)} />
-        <input type="text" placeholder="Contact Number" value={contact} onChange={(e) => setContact(e.target.value)} />
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-        <button type="submit">Register</button>
-      </form>
-    </div>
+    <Box 
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        backgroundColor: '#f7f7f7',
+        paddingBottom: '60px',
+        paddingLeft: '1rem',
+        paddingRight: '1rem',
+      }}
+    >
+      <Typography variant="h4" gutterBottom>Student Register</Typography>
+      <Box 
+        component="form" 
+        onSubmit={handleRegister}
+        sx={{
+          maxWidth: '400px',
+          width: '100%',
+          backgroundColor: 'white',
+          padding: '20px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+          boxSizing: 'border-box',
+        }}
+      >
+        <TextField fullWidth label="Name" value={name} onChange={(e) => setName(e.target.value)} margin="normal" />
+        <TextField fullWidth label="USN" value={usn} onChange={(e) => setUsn(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Branch" value={branch} onChange={(e) => setBranch(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Section" value={section} onChange={(e) => setSection(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Age" value={age} type="number" onChange={(e) => setAge(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Weight" value={weight} type="number" onChange={(e) => setWeight(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Contact Number" value={contact} onChange={(e) => setContact(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Confirm Password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} margin="normal" />
+        <Button fullWidth variant="contained" color="primary" type="submit">Register</Button>
+      </Box>
+    </Box>
   );
 }
 

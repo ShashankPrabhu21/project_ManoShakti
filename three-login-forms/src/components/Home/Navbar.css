@@ -1,22 +1,32 @@
-/* src/components/Home/Navbar.css */
-
-body {
+/* Reset body margin and padding */
+body { 
     margin: 0;
     padding: 0;
 }
 
+/* Header background and general styling */
 header {
-    background-color: #333; /* Same background color */
-    color: white; /* Text color */
+    background-color: #333;
+    color: white;
+    position: relative;
 }
 
+/* Navbar flex layout */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
+/* Logo styling */
+.logo h2 {
+    margin: 0;
+}
+
+/* Navigation menu styling */
 .nav-menu {
     list-style: none;
     display: flex;
@@ -24,61 +34,119 @@ header {
     padding: 0;
 }
 
+/* Individual nav items */
 .nav-menu li {
-    position: relative; /* Necessary for positioning the dropdown */
+    position: relative;
     margin: 0 1rem;
 }
 
 .nav-menu li a {
-    color: rgb(255, 255, 255);
+    color: white;
     text-decoration: none;
     padding: 0.5rem 1rem;
     transition: background 0.3s;
 }
 
+/* Hover effects for links */
 .nav-menu li a:hover {
-    background-color: #7c7c7c; /* Change background on hover */
+    background-color: #7c7c7c;
 }
 
+/* Dropdown styling */
 .dropdown-content {
-    display: none; /* Hidden by default */
+    display: none;
     position: absolute;
-    background-color: rgb(69, 74, 77); /* Dropdown background color */
-    min-width: 120px; /* Set width for dropdown */
-    z-index: 1; /* Ensure dropdown appears above other elements */
-    border: 1px solid #000000; /* Optional border */
-    padding: 0.5rem 0; /* Add padding for spacing */
-    border-radius: 4px; /* Optional rounded corners */
+    background-color: rgb(69, 74, 77);
+    min-width: 120px;
+    z-index: 1;
+    border: 1px solid #000;
+    padding: 0.5rem 0;
+    border-radius: 4px;
 }
 
+/* Show dropdown on hover */
 .dropdown:hover .dropdown-content {
-    display: block; /* Show dropdown on hover */
+    display: block;
 }
 
+/* Dropdown link styling */
 .dropdown-content a {
-    color: white; /* Dropdown text color */
-    padding: 0.5rem 1rem; /* Smaller padding for a smaller appearance */
+    color: white;
+    padding: 0.5rem 1rem;
     text-decoration: none;
-    display: block; /* Make links stack vertically */
+    display: block;
 }
 
+/* Hover effects inside dropdown */
 .dropdown-content a:hover {
-    background-color: #f1f1f1; /* Change dropdown link background on hover */
-    color: black; /* Change text color on hover */
+    background-color: #f1f1f1;
+    color: black;
 }
 
-/* Mobile responsiveness */
+/* Hamburger menu icon for smaller screens */
+.hamburger {
+    display: none; /* Hidden on larger screens */
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: white;
+}
+
+/* Responsive Navbar adjustments */
 @media (max-width: 768px) {
+    /* Stack navbar vertically on smaller screens */
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    /* Hide the full nav menu by default on small screens */
     .nav-menu {
-        flex-direction: column; /* Stack links vertically */
+        display: none;
+        flex-direction: row;
+        width: 100%;
     }
 
+    /* Show the menu when it is active (on click of hamburger) */
+    .nav-menu.active {
+        display: flex;
+    }
+
+    /* Hamburger menu is visible on small screens */
+    .hamburger {
+        display: block;
+    }
+
+    /* Center nav links on smaller screens */
     .nav-menu li {
-        margin: 0.5rem 0; /* Space out links */
+        margin: 0.5rem 0;
+        text-align: center;
     }
 
+    /* Make dropdown full width on mobile */
     .dropdown-content {
-        left: 0; /* Align dropdown to the left */
-        right: 0; /* Align dropdown to the right */
+        width: 100%;
+        left: 0;
+        right: 0;
     }
+
+    /* Adjust padding for smaller screens */
+    .navbar {
+        padding: 1rem;
+    }
+}
+
+/* Style the logout button */
+.logout-btn {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Hover effect for logout button */
+.logout-btn:hover {
+    background-color: #e60000;
 }

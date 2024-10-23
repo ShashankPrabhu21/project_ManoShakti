@@ -1,12 +1,29 @@
-/* src/components/Footer.css */
 footer {
-    background-color: #333; /* Same as navbar background */
-    color: white; /* Footer text color */
+    background-color: #333;
+    color: white;
     text-align: center;
-    padding: 1rem 0; /* Padding for top and bottom */
-    position: fixed; /* Fixes the footer to the bottom */
-    left: 0; /* Aligns footer to the left */
-    bottom: 0; /* Positions it at the bottom of the page */
-    width: 100%; /* Ensures footer spans the entire width */
-    z-index: 1000; /* Ensures footer is above other elements */
+    padding: 1rem 0;
+    position: relative; /* Remove the sticky positioning */
+    width: 100%;
+    z-index: 1000;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    footer {
+        position: static; /* Ensure it's not fixed on smaller screens */
+        padding: 1rem;  /* Add more padding for better appearance */
+        font-size: 0.9rem; /* Adjust font size for smaller screens */
+    }
+}
+
+/* Add bottom padding to ensure content doesn't overlap with the footer */
+body {
+    padding-bottom: 60px; /* Keep same padding as footer height for larger screens */
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-bottom: 20px; /* Less padding on small screens */
+    }
 }

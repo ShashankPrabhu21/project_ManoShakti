@@ -1,13 +1,28 @@
 // src/components/Footer.js
 
 import React from 'react';
-import './Footer.css'; // Import the footer CSS file
+import { Box, Typography } from '@mui/material';
 
-function Footer() {
+const Footer = () => {
     return (
-        <footer>
-            <p>&copy; 2024 ManoShakthi. All rights reserved.</p>
-        </footer>
+        <Box 
+            component="footer"
+            sx={{
+                backgroundColor: '#333',
+                color: 'white',
+                textAlign: 'center',
+                padding: '1rem 0',
+                width: '100%',
+                zIndex: 1000,
+                position: 'relative',
+                bottom: 0,
+                left: 0,
+            }}
+        >
+            <Typography variant="body2">
+                &copy; 2024 ManoShakthi. All rights reserved.
+            </Typography>
+        </Box>
     );
 }
 

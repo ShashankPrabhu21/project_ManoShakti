@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; 
+import { Box, Button, TextField, Typography } from '@mui/material';
 import { auth, db } from '../../firebaseConfig'; 
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 
 function CounselorRegister() {
   const [name, setName] = useState('');
@@ -11,7 +12,7 @@ function CounselorRegister() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate(); 
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -21,11 +22,9 @@ function CounselorRegister() {
     }
 
     try {
-      // Register user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Save counselor information in Firestore
       await setDoc(doc(db, 'counselors', user.uid), {
         name,
         contact,
@@ -33,49 +32,48 @@ function CounselorRegister() {
       });
 
       alert('Counselor registration successful');
-      navigate('/counselor-dashboard'); // Navigate to the counselor dashboard after registration
+      navigate('/counselor-dashboard');
     } catch (error) {
       alert(error.message);
     }
   };
 
   return (
-    <div>
-      <h2>Counselor Register</h2>
-      <form onSubmit={handleRegister}>
-        <input
-          type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Contact Number"
-          value={contact}
-          onChange={(e) => setContact(e.target.value)}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-        <button type="submit">Register</button>
-      </form>
-    </div>
+    <Box 
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        backgroundColor: '#f7f7f7',
+        paddingBottom: '60px',
+        paddingLeft: '1rem',
+        paddingRight: '1rem',
+      }}
+    >
+      <Typography variant="h4" gutterBottom>Counselor Register</Typography>
+      <Box 
+        component="form" 
+        onSubmit={handleRegister}
+        sx={{
+          maxWidth: '400px',
+          width: '100%',
+          backgroundColor: 'white',
+          padding: '20px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+          boxSizing: 'border-box',
+        }}
+      >
+        <TextField fullWidth label="Name" value={name} onChange={(e) => setName(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Contact Number" value={contact} onChange={(e) => setContact(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Confirm Password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} margin="normal" />
+        <Button fullWidth variant="contained" color="primary" type="submit">Register</Button>
+      </Box>
+    </Box>
   );
 }
 

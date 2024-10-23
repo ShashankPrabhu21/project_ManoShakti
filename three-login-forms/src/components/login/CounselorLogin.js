@@ -2,7 +2,16 @@ import React, { useState } from 'react';
 import { auth, db } from '../../firebaseConfig'; // Firebase config
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore'; // Firestore functions
-import { useNavigate,Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  Snackbar,
+  Alert,
+} from '@mui/material';
 
 function CounselorLogin({ handleAuthentication }) {
   const [email, setEmail] = useState('');
@@ -36,32 +45,57 @@ function CounselorLogin({ handleAuthentication }) {
   };
 
   return (
-    <div>
-      <h2>Counselor Login</h2>
+    <Container maxWidth="xs">
+      <Box sx={{ mt: 4, mb: 2 }}>
+        <Typography variant="h4" align="center">
+          Counselor Login
+        </Typography>
+      </Box>
       <form onSubmit={handleLogin}>
-        <input
+        <TextField
+          label="Email"
           type="email"
-          placeholder="Email"
+          variant="outlined"
+          fullWidth
+          margin="normal"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <input
+        <TextField
+          label="Password"
           type="password"
-          placeholder="Password"
+          variant="outlined"
+          fullWidth
+          margin="normal"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Login</button>
+        <Button 
+          type="submit" 
+          variant="contained" 
+          color="primary" 
+          fullWidth 
+          sx={{ mt: 2 }}
+        >
+          Login
+        </Button>
       </form>
 
       {/* Display error message */}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <p>
-        New here? <Link to="/register/counselor">Register as a Parent</Link>
-      </p>
-    </div>
+      {error && (
+        <Snackbar open={Boolean(error)} autoHideDuration={6000} onClose={() => setError('')}>
+          <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
+            {error}
+          </Alert>
+        </Snackbar>
+      )}
+
+      <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+        New here? <Link to="/register/counselor">Register as a Counselor</Link>
+      </Typography>
+    </Container>
   );
 }
 

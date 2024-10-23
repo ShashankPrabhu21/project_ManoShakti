@@ -1,4 +1,5 @@
 import React, { useState } from 'react'; 
+import { Box, Button, TextField, Typography } from '@mui/material';
 import { auth, db } from '../../firebaseConfig'; 
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
@@ -13,7 +14,7 @@ function ParentRegister() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -23,11 +24,9 @@ function ParentRegister() {
     }
 
     try {
-      // Register user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Save parent information in Firestore
       await setDoc(doc(db, 'parents', user.uid), {
         parentName,
         studentName,
@@ -37,61 +36,50 @@ function ParentRegister() {
       });
 
       alert('Parent registration successful');
-      navigate('/parent-dashboard'); // Navigate to dashboard
+      navigate('/parent-dashboard');
     } catch (error) {
       alert(error.message);
     }
   };
 
   return (
-    <div>
-      <h2>Parent Register</h2>
-      <form onSubmit={handleRegister}>
-        <input
-          type="text"
-          placeholder="Parent Name"
-          value={parentName}
-          onChange={(e) => setParentName(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Student Name"
-          value={studentName}
-          onChange={(e) => setStudentName(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Student USN"
-          value={studentUsn}
-          onChange={(e) => setStudentUsn(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Contact Number"
-          value={contact}
-          onChange={(e) => setContact(e.target.value)}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-        <button type="submit">Register</button>
-      </form>
-    </div>
+    <Box 
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        backgroundColor: '#f7f7f7',
+        paddingBottom: '60px',
+        paddingLeft: '1rem',
+        paddingRight: '1rem',
+      }}
+    >
+      <Typography variant="h4" gutterBottom>Parent Register</Typography>
+      <Box 
+        component="form" 
+        onSubmit={handleRegister}
+        sx={{
+          maxWidth: '400px',
+          width: '100%',
+          backgroundColor: 'white',
+          padding: '20px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+          boxSizing: 'border-box',
+        }}
+      >
+        <TextField fullWidth label="Parent Name" value={parentName} onChange={(e) => setParentName(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Student Name" value={studentName} onChange={(e) => setStudentName(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Student USN" value={studentUsn} onChange={(e) => setStudentUsn(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Contact Number" value={contact} onChange={(e) => setContact(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Confirm Password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} margin="normal" />
+        <Button fullWidth variant="contained" color="primary" type="submit">Register</Button>
+      </Box>
+    </Box>
   );
 }
 
