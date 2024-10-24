@@ -1,20 +1,12 @@
-.App {
-  text-align: center;
+/* index.css or App.css */
+html, body {
+  height: 100%; /* Full height */
+  margin: 0;    /* Remove default margin */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
-form {
-  display: flex;
-  flex-direction: column;
-  width: 200px;
-  margin: auto;
+#root {
+  height: 100vh; /* Full viewport height */
+  display: flex;  /* Flexbox for layout */
+  flex-direction: column; /* Vertical layout */
 }
-
-input {
-  margin: 5px 0;
-  padding: 8px;
-}
-
-button {
-  padding: 8px;
-}
-   
