@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'; 
-import { auth, db } from '../../firebaseConfig'; // Import Firebase Auth & Firestore
-import { doc, getDoc } from 'firebase/firestore'; // Import Firestore functions
+import React, { useEffect, useState } from 'react';
+import { auth, db } from '../../firebaseConfig';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import ADHDForm from '../ADHD/AdhdForm';
 import DASSForm from '../DASS/DASSForm';
 import FOMOForm from '../FOMO/FOMOForm';
@@ -9,12 +9,14 @@ import { Container, Typography, Card, CardContent, Grid, Box, Button } from '@mu
 function StudentDashboard() {
   const [studentData, setStudentData] = useState(null);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [adhdData, setAdhdData] = useState(null);
+  const [dassData, setDassData] = useState(null);
+  const [fomoData, setFomoData] = useState(null);
 
   useEffect(() => {
-    // Fetch student data from Firestore
     const fetchStudentData = async () => {
-      const studentId = auth.currentUser.uid; // Get the current user's ID
-      const studentRef = doc(db, 'students', studentId); // Reference to the student's document
+      const studentId = auth.currentUser.uid;
+      const studentRef = doc(db, 'students', studentId);
       const studentSnapshot = await getDoc(studentRef);
       if (studentSnapshot.exists()) {
         setStudentData(studentSnapshot.data());
@@ -22,20 +24,23 @@ function StudentDashboard() {
         console.log('No such student document!');
       }
     };
-
     fetchStudentData();
   }, []);
 
-  const handleFormSubmission = async (formType, formData) => {
-    const studentId = auth.currentUser.uid; // Get the current user's ID
-    await db.collection('students').doc(studentId).update({
-      [`forms.${formType}`]: formData,
-    }).then(() => {
-      alert(`${formType.toUpperCase()} form submitted successfully`);
+  const handleSubmitAllForms = async () => {
+    const studentId = auth.currentUser.uid;
+    try {
+      const studentRef = doc(db, 'students', studentId);
+      await updateDoc(studentRef, {
+        'forms.adhd': adhdData,
+        'forms.dass': dassData,
+        'forms.fomo': fomoData,
+      });
+      alert('All forms submitted successfully');
       setFormSubmitted(true);
-    }).catch((error) => {
-      console.error('Error submitting form:', error);
-    });
+    } catch (error) {
+      console.error('Error submitting forms:', error);
+    }
   };
 
   return (
@@ -51,21 +56,7 @@ function StudentDashboard() {
               <Grid item xs={12}>
                 <Typography variant="h6" align="center">Welcome, {studentData.name}</Typography>
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography><strong>USN/Roll Number:</strong> {studentData.usn}</Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography><strong>Branch:</strong> {studentData.branch}</Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography><strong>Age:</strong> {studentData.age}</Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography><strong>Weight:</strong> {studentData.weight}</Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography><strong>Contact:</strong> {studentData.contact}</Typography>
-              </Grid>
+              {/* Display additional student data */}
             </Grid>
           </CardContent>
         )}
@@ -80,14 +71,30 @@ function StudentDashboard() {
       {!formSubmitted && (
         <Box>
           <Card sx={{ mb: 3, p: 2 }}>
-            <ADHDForm onSubmit={(data) => handleFormSubmission('adhd', data)} />
+            <ADHDForm onSubmit={(data) => setAdhdData(data)} />
           </Card>
           <Card sx={{ mb: 3, p: 2 }}>
-            <DASSForm onSubmit={(data) => handleFormSubmission('dass', data)} />
+            <DASSForm onSubmit={(data) => setDassData(data)} />
           </Card>
           <Card sx={{ mb: 3, p: 2 }}>
-            <FOMOForm onSubmit={(data) => handleFormSubmission('fomo', data)} />
+            <FOMOForm onSubmit={(data) => setFomoData(data)} />
           </Card>
+          <Box textAlign="center" mt={4}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSubmitAllForms}
+              disabled={!adhdData || !dassData || !fomoData}
+              sx={{
+                paddingX: 5,
+                paddingY: 2,
+                fontSize: '1.2rem',
+                boxShadow: 3,
+              }}
+            >
+              Submit All Forms
+            </Button>
+          </Box>
         </Box>
       )}
 

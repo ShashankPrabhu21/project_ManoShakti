@@ -1,104 +1,102 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, Box } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close'; // Close icon for the menu
-import MenuIcon from '@mui/icons-material/Menu'; // Hamburger icon for mobile
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // Arrow icon for back button
+import CloseIcon from '@mui/icons-material/Close';
+import MenuIcon from '@mui/icons-material/Menu';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-function Navbar({ authenticated, onLogout }) {
-  const [anchorEl, setAnchorEl] = useState(null); // State for login dropdown menu
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // State for mobile menu
-  const menuRef = useRef(); // Reference for detecting clicks outside the menu
+const Navbar = ({ authenticated, onLogout, setActiveSection }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef();
+  const navigate = useNavigate();
 
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget); // Open the dropdown menu
-  };
+  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
+  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
-  const handleMenuClose = () => {
-    setAnchorEl(null); // Close the dropdown menu
-  };
-
-  const toggleMenu = () => {
-    setIsMenuOpen((prev) => !prev); // Toggle the mobile menu
-  };
-
-  const scrollToSection = (sectionId) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
-      setIsMenuOpen(false); // Close mobile menu after selecting a section
-    }
-  };
-
-  const handleLoginSelect = () => {
-    handleMenuClose(); // Close dropdown after selection
-    setIsMenuOpen(false); // Close mobile menu
-  };
-
-  // Close the mobile menu if clicked outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsMenuOpen(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const navButtons = [
+    { label: 'Home', action: () => navigate('/') },
+    { label: 'About Us', action: () => { setActiveSection('about'); navigate('/about'); } },
+    { label: 'Services', action: () => { setActiveSection('services'); navigate('/services'); } },
+    { label: 'Contact', action: () => { setActiveSection('contact'); navigate('/contact'); } },
+  ];
+
+  const loginOptions = [
+    { label: 'Student Login', path: '/login/student' },
+    { label: 'Parent Login', path: '/login/parent' },
+    { label: 'Counselor Login', path: '/login/counselor' },
+  ];
+
+  const renderNavButton = (button, mobile = false) => (
+    <Button
+      key={button.label}
+      onClick={button.action}
+      color={mobile ? "primary" : "inherit"} // Change color based on mobile view
+      variant={mobile ? "contained" : "text"} // Use contained variant for mobile
+      sx={{
+        borderRadius: '20px',
+        padding: '6px 12px',
+        margin: mobile ? '8px 0' : '0', // Add margin for mobile buttons
+        width: mobile ? '100%' : 'auto', // Make buttons full width in mobile view
+      }}
+    >
+      {button.label}
+    </Button>
+  );
+
+  const renderLoginOptions = (mobile) => (
+    <Menu
+      id={mobile ? 'login-menu-mobile' : 'login-menu'}
+      anchorEl={anchorEl}
+      keepMounted
+      open={Boolean(anchorEl)}
+      onClose={handleMenuClose}
+    >
+      {loginOptions.map((option) => (
+        <MenuItem key={option.label} onClick={handleMenuClose}>
+          <Link to={option.path} style={{ textDecoration: 'none', color: 'inherit' }}>
+            {option.label}
+          </Link>
+        </MenuItem>
+      ))}
+    </Menu>
+  );
 
   return (
     <AppBar position="static">
       <Toolbar>
-        {/* "ManoShakti" logo aligned to the left */}
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>ManoShakti</Link>
         </Typography>
 
-        {/* Navigation links for larger screens */}
+        {/* Desktop Nav Buttons */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
-          <Button onClick={() => scrollToSection('home')} color="inherit">Home</Button>
-          <Button onClick={() => scrollToSection('about')} color="inherit">About Us</Button>
-          <Button onClick={() => scrollToSection('services')} color="inherit">Services</Button>
-          <Button onClick={() => scrollToSection('contact')} color="inherit">Contact</Button>
-
-          {/* Login dropdown for larger screens */}
+          {navButtons.map(button => renderNavButton(button))}
           <Button
             aria-controls="login-menu"
             aria-haspopup="true"
             onClick={handleMenuOpen}
             color="inherit"
-            variant="outlined" // Different style for dropdown button
+            variant="outlined"
             sx={{ borderRadius: '20px', padding: '6px 12px' }}
           >
             Login
           </Button>
-          <Menu
-            id="login-menu"
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem onClick={handleLoginSelect}>
-              <Link to="/login/student" style={{ textDecoration: 'none', color: 'inherit' }}>Student Login</Link>
-            </MenuItem>
-            <MenuItem onClick={handleLoginSelect}>
-              <Link to="/login/parent" style={{ textDecoration: 'none', color: 'inherit' }}>Parent Login</Link>
-            </MenuItem>
-            <MenuItem onClick={handleLoginSelect}>
-              <Link to="/login/counselor" style={{ textDecoration: 'none', color: 'inherit' }}>Counselor Login</Link>
-            </MenuItem>
-          </Menu>
-
-          {authenticated && (
-            <Button color="inherit" onClick={onLogout}>Logout</Button>
-          )}
+          {authenticated && <Button color="inherit" onClick={onLogout}>Logout</Button>}
         </Box>
 
-        {/* Hamburger icon for mobile */}
+        {/* Mobile Menu Toggle */}
         <IconButton
           edge="start"
           color="inherit"
@@ -109,7 +107,7 @@ function Navbar({ authenticated, onLogout }) {
           {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
         </IconButton>
 
-        {/* Mobile menu */}
+        {/* Mobile Nav Menu */}
         {isMenuOpen && (
           <Box
             ref={menuRef}
@@ -125,57 +123,34 @@ function Navbar({ authenticated, onLogout }) {
               borderRadius: '5px',
             }}
           >
-            <Button onClick={() => scrollToSection('home')} style={{ display: 'block', padding: '8px', color: 'black' }}>Home</Button>
-            <Button onClick={() => scrollToSection('about')} style={{ display: 'block', padding: '8px', color: 'black' }}>About Us</Button>
-            <Button onClick={() => scrollToSection('services')} style={{ display: 'block', padding: '8px', color: 'black' }}>Services</Button>
-            <Button onClick={() => scrollToSection('contact')} style={{ display: 'block', padding: '8px', color: 'black' }}>Contact</Button>
-
-            {/* Login dropdown for mobile */}
+            {navButtons.map(button => renderNavButton(button, true))} {/* Pass true for mobile view */}
             <Button
               aria-controls="login-menu-mobile"
               aria-haspopup="true"
               onClick={handleMenuOpen}
-              color="primary" // Change to primary for better visibility
-              variant="contained" // Using contained style for visibility
-              sx={{ borderRadius: '20px', padding: '6px 12px', display: 'block' }}
+              color="primary"
+              variant="contained"
+              sx={{ borderRadius: '20px', padding: '6px 12px', display: 'block', marginTop: '8px' }}
             >
               Login
             </Button>
-            <Menu
-              id="login-menu-mobile"
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-            >
-              <MenuItem onClick={handleLoginSelect}>
-                <Link to="/login/student" style={{ textDecoration: 'none', color: 'inherit' }}>Student Login</Link>
-              </MenuItem>
-              <MenuItem onClick={handleLoginSelect}>
-                <Link to="/login/parent" style={{ textDecoration: 'none', color: 'inherit' }}>Parent Login</Link>
-              </MenuItem>
-              <MenuItem onClick={handleLoginSelect}>
-                <Link to="/login/counselor" style={{ textDecoration: 'none', color: 'inherit' }}>Counselor Login</Link>
-              </MenuItem>
-            </Menu>
-
+            {renderLoginOptions(true)}
             {authenticated && (
-              <Button color="inherit" onClick={onLogout} style={{ display: 'block', padding: '8px', color: 'black' }}>Logout</Button>
+              <Button color="primary" onClick={onLogout} sx={{ display: 'block', padding: '8px', width: '100%' }}>
+                Logout
+              </Button>
             )}
           </Box>
         )}
 
         {/* Back to Home button with arrow icon */}
-        <IconButton 
-          color="inherit" 
-          onClick={() => scrollToSection('home')} 
-          sx={{ ml: 2 }}
-        >
+        <IconButton color="inherit" onClick={() => navigate('/')} sx={{ ml: 2 }}>
           <ArrowBackIcon />
         </IconButton>
       </Toolbar>
+      {renderLoginOptions(false)}
     </AppBar>
   );
-}
+};
 
 export default Navbar;

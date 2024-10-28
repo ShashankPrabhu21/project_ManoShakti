@@ -1,45 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box } from '@mui/material';
-import Navbar from './Navbar'; // Adjust this import according to your folder structure
-import Footer from './Footer'; // Adjust this import according to your folder structure
+import Navbar from './Navbar';
+import Footer from './Footer';
 
-const MainLayout = ({ children, authenticated, onLogout }) => {
+const MainLayout = ({ authenticated, onLogout, children }) => {
+    const [activeSection, setActiveSection] = useState(null);
+
     return (
-        <Box 
+        <Box
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                minHeight: '100vh', // Ensure the layout takes full viewport height
-                bgcolor: 'background.default', // Set background to match the theme
-                color: 'text.primary', // Ensure text color matches the theme
+                minHeight: '100vh',
+                bgcolor: 'background.default',
+                color: 'text.primary',
             }}
         >
-            {/* Navbar Component */}
-            <Navbar authenticated={authenticated} onLogout={onLogout} />
-            
-            {/* Main Content Area */}
+            <Navbar authenticated={authenticated} onLogout={onLogout} setActiveSection={setActiveSection} />
+
             <Box
                 component="main"
                 sx={{
-                    flex: 1, // This makes the content area flexible and pushes the footer down
+                    flex: 1,
                     width: '100%',
-                    p: 3, // Padding for spacing
+                    p: 3,
                     display: 'flex',
-                    justifyContent: 'center', // Center the children content
+                    justifyContent: 'center',
                     alignItems: 'center',
                 }}
             >
-                {children} {/* Render main content here */}
+                {/* Render the active section */}
+                {React.cloneElement(children, { activeSection, setActiveSection })}
             </Box>
 
-            {/* Footer Component */}
-            <Footer 
-                sx={{
-                    mt: 'auto', // Push footer to the bottom if content is short
-                    py: 2, // Padding for vertical spacing
-                    textAlign: 'center',
-                }}
-            />
+            <Footer sx={{ mt: 'auto', py: 2, textAlign: 'center' }} />
         </Box>
     );
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Button, Typography, RadioGroup, FormControlLabel, Radio, FormLabel, FormControl, Box, Card, CardContent } from '@mui/material';
+import { Container, Button, Typography, RadioGroup, FormControlLabel, Radio, Box, Card, CardContent } from '@mui/material';
 import { getAuth } from "firebase/auth";
 import { doc, setDoc, getFirestore } from "firebase/firestore";
 
@@ -130,12 +130,6 @@ const ADHDForm = () => {
           </Card>
         ))}
 
-        {/* Fixed Submit Button at the bottom */}
-        <Box sx={{ position: 'fixed', bottom: '10px', width: '100%', textAlign: 'center', padding: '0 15px' }}>
-          <Button type="submit" variant="contained" color="secondary" sx={{ padding: '12px 24px', fontSize: '1rem', width: '100%', maxWidth: 400 }}>
-            Submit Responses
-          </Button>
-        </Box>
       </form>
 
       {/* Display Results */}
