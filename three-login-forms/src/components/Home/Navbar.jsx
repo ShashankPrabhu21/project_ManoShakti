@@ -28,12 +28,12 @@ const Navbar = ({ authenticated, onLogout, setActiveSection }) => {
   }, []);
 
   const navButtons = [
-    { label: 'Home', action: () => navigate('/') },
-    { label: 'About Us', action: () => navigate('/about') },
-    { label: 'Services', action: () => navigate('/services') },
-    { label: 'Contact', action: () => navigate('/contact') },
-  ];
-  
+  { label: 'Home', action: () => navigate('/') },
+  { label: 'About Us', action: () => navigate('/about') },
+  { label: 'Services', action: () => navigate('/services') },
+  { label: 'Contact', action: () => navigate('/contact') },
+];
+
 
   const loginOptions = [
     { label: 'Student Login', path: '/login/student' },

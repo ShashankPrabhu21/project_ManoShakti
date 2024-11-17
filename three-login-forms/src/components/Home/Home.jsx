@@ -28,7 +28,7 @@ const Home = () => {
       </Box>
 
       {/* Explore Our Sections */}
-      <Box className="explore-sections"> <br></br>
+      <Box className="explore-sections"> 
         <Typography variant="h5" className="section-title">
           Explore Our Sections
         </Typography>
