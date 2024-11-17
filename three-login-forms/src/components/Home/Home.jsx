@@ -1,111 +1,111 @@
 import React from 'react';
-import WelcomeSection from './WelcomeSection';
-import About from '../About';
-import Services from '../Services';
-import Contact from '../contact'; // Ensure this import is correct
-import { Container, Typography, Box, Button, Collapse, Stack } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Box, Typography, Container, Button, Stack } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import './Home.css'; // Import the custom CSS
 
-const Home = ({ activeSection, setActiveSection }) => {
+const Home = () => {
+  const navigate = useNavigate();
+
   return (
-    <Container className="home-container" maxWidth="lg">
-      <section id="home">
-        <WelcomeSection />
-      </section>
+    <Box className="home-container">
+      {/* Hero Section */}
+      <Box className="hero-section">
+        <Box>
+          <Typography variant="h2" className="hero-title">
+            Welcome to ManoShakti
+          </Typography>
+          <Typography variant="h6" className="hero-subtitle">
+            Empowering student mental health with personalized assessments and support.
+          </Typography>
+          <Button
+            variant="contained"
+            className="hero-button"
+            onClick={() => navigate('/about')}
+          >
+            Learn More
+          </Button>
+        </Box>
+      </Box>
 
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h5" align="center" gutterBottom>
+      {/* Explore Our Sections */}
+      <Box className="explore-sections"> <br></br>
+        <Typography variant="h5" className="section-title">
           Explore Our Sections
         </Typography>
-
-        <Box sx={{ textAlign: 'center', my: 4 }}>
-          <Stack direction="row" spacing={2} justifyContent="center">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setActiveSection('about')}
-              endIcon={<ExpandMoreIcon />}
-              sx={{
-                transition: '0.3s',
-                ...(activeSection === 'about' ? { bgcolor: 'primary.dark' } : {}),
-              }}
-            >
-              About Us
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => setActiveSection('services')}
-              endIcon={<ExpandMoreIcon />}
-              sx={{
-                transition: '0.3s',
-                ...(activeSection === 'services' ? { bgcolor: 'secondary.dark' } : {}),
-              }}
-            >
-              Our Services
-            </Button>
-            <Button
-              variant="contained"
-              color="info"
-              onClick={() => setActiveSection('contact')}
-              endIcon={<ExpandMoreIcon />}
-              sx={{
-                transition: '0.3s',
-                ...(activeSection === 'contact' ? { bgcolor: 'info.dark' } : {}),
-              }}
-            >
-              Contact Us
-            </Button>
-          </Stack>
-        </Box>
-
-        {/* Collapsible Sections */}
-        <Collapse in={activeSection === 'about'} unmountOnExit>
-          <Box
-            sx={{
-              mt: 2,
-              p: 2,
-              border: '1px solid #ddd',
-              borderRadius: 2,
-              boxShadow: 3,
-              backgroundColor: 'white', // Ensures a clean background
-            }}
+        <Stack direction="row" spacing={3} justifyContent="center" sx={{ flexWrap: 'wrap' }}>
+          <Button
+            variant="outlined"
+            className="nav-button"
+            onClick={() => navigate('/about')}
           >
-            <About />
-          </Box>
-        </Collapse>
-
-        <Collapse in={activeSection === 'services'} unmountOnExit>
-          <Box
-            sx={{
-              mt: 2,
-              p: 2,
-              border: '1px solid #ddd',
-              borderRadius: 2,
-              boxShadow: 3,
-              backgroundColor: 'white',
-            }}
+            About Us
+          </Button>
+          <Button
+            variant="outlined"
+            className="nav-button"
+            onClick={() => navigate('/services')}
           >
-            <Services />
-          </Box>
-        </Collapse>
-
-        <Collapse in={activeSection === 'contact'} unmountOnExit>
-          <Box
-            sx={{
-              mt: 2,
-              p: 2,
-              border: '1px solid #ddd',
-              borderRadius: 2,
-              boxShadow: 3,
-              backgroundColor: 'white',
-            }}
+            Our Services
+          </Button>
+          <Button
+            variant="outlined"
+            className="nav-button"
+            onClick={() => navigate('/contact')}
           >
-            <Contact />
-          </Box>
-        </Collapse>
+            Contact Us
+          </Button>
+        </Stack>
       </Box>
-    </Container>
+
+      {/* Key Features Section */}
+      <Box className="key-features">
+        <Typography variant="h5" className="section-title">
+          Key Features
+        </Typography>
+        <Stack direction="row" spacing={6} justifyContent="center" sx={{ flexWrap: 'wrap' }}>
+          <Box className="feature-box">
+            <Typography variant="h6" className="feature-title">Data-Driven Insights</Typography>
+            <Typography variant="body2" className="feature-description">
+              Track student progress and get actionable reports.
+            </Typography>
+          </Box>
+          <Box className="feature-box">
+            <Typography variant="h6" className="feature-title">Confidentiality</Typography>
+            <Typography variant="body2" className="feature-description">
+              We ensure complete privacy and security for all assessments.
+            </Typography>
+          </Box>
+          <Box className="feature-box">
+            <Typography variant="h6" className="feature-title">Expert Guidance</Typography>
+            <Typography variant="body2" className="feature-description">
+              Receive personalized recommendations from our counselors.
+            </Typography>
+          </Box>
+        </Stack>
+      </Box>
+
+      {/* Ready to Get Started Section */}
+      <Box className="get-started">
+        <Container className="get-started-container">
+          <Typography variant="h4" className="get-started-title">
+            Ready to Get Started?
+          </Typography>
+          <Typography variant="h6" className="get-started-description">
+            Join us today and take the first step toward better mental health.
+          </Typography>
+          <Button
+            variant="contained"
+            className="get-started-button"
+            onClick={() => navigate('/signup')}
+          >
+            Get Started
+          </Button>
+        </Container>
+      </Box>
+
+      {/* Footer Section */}
+      
+    </Box>
   );
 };
 

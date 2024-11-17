@@ -5,6 +5,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
+
+
 const Navbar = ({ authenticated, onLogout, setActiveSection }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,10 +29,11 @@ const Navbar = ({ authenticated, onLogout, setActiveSection }) => {
 
   const navButtons = [
     { label: 'Home', action: () => navigate('/') },
-    { label: 'About Us', action: () => { setActiveSection('about'); navigate('/about'); } },
-    { label: 'Services', action: () => { setActiveSection('services'); navigate('/services'); } },
-    { label: 'Contact', action: () => { setActiveSection('contact'); navigate('/contact'); } },
+    { label: 'About Us', action: () => navigate('/about') },
+    { label: 'Services', action: () => navigate('/services') },
+    { label: 'Contact', action: () => navigate('/contact') },
   ];
+  
 
   const loginOptions = [
     { label: 'Student Login', path: '/login/student' },

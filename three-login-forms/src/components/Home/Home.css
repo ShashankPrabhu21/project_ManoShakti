@@ -1,43 +1,141 @@
+/* Home Container */
 .home-container {
-    display: flex; /* Allow for side-by-side layout on larger screens */
-    flex-direction: column; /* Stack elements vertically on smaller screens */
-    align-items: center; /* Center elements horizontally */
-    min-height: 100vh; /* Set minimum height for full viewport */
+  font-family: 'Arial', sans-serif;
+}
+
+/* Hero Section */
+.hero-section {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: #004080; /* Dark blue background */
+  color: white;
+  padding: 0 20px;
+}
+
+.hero-title {
+  font-weight: 600;
+  font-size: 3rem;
+}
+
+.hero-subtitle {
+  margin-top: 2rem;
+  font-weight: 300;
+}
+
+.hero-button {
+  margin-top: 3rem;
+  background-color: #006bb3;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.hero-button:hover {
+  background-color: #00599e;
+}
+
+/* Explore Our Sections */
+.explore-sections {
+  margin: 6rem 0;
+}
+
+.section-title {
+  font-weight: 500;
+  color: #333;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.nav-button {
+  color: #004080;
+  border-color: #004080;
+  padding: 12px 24px;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.nav-button:hover {
+  background-color: #004080;
+  color: white;
+}
+
+@media (max-width: 600px) {
+  .nav-button {
+    width: 100%; /* Make buttons full width on mobile */
+    margin-bottom: 1rem;
   }
-  
-  .content-wrapper {
-    margin: 20px; /* Adjust margins for better spacing */
-    width: 70%; /* Define a maximum width for content area */
-    text-align: center;
-  }
-  
-  .about-section,
-  .services-section,
-  .contact-section {
-    /* Apply common styles to all sections */
-    margin: 20px 0;
-    padding: 10px; /* Add some padding for visual separation */
-    border: 1px solid #ddd; /* Add a subtle border */
-    border-radius: 5px; /* Add rounded corners */
-  }
-  
-  h2 {
-    margin-bottom: 10px; /* Add some space after headings */
-  }
-  
-  ul {
-    list-style: none; /* Remove default bullet points */
-    padding: 0; /* Reset default padding */
-    margin: 0; /* Reset default margin */
-  }
-  
-  li {
-    margin-bottom: 5px; /* Add spacing between list items */
-  }
-  
-  /* Add media queries for specific screen sizes if needed */
-  @media only screen and (max-width: 768px) {
-    .content-wrapper {
-      width: 90%; /* Adjust content width for smaller screens */
-    }
-  }
+}
+
+/* Key Features Section */
+.key-features {
+  margin: 6rem 0;
+  background-color: #f9f9f9;
+  padding: 50px 20px;
+}
+
+.feature-box {
+  text-align: center;
+  max-width: 350px;
+  padding: 3rem;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.feature-title {
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.feature-description {
+  margin-top: 2rem;
+  color: #555;
+}
+
+/* Ready to Get Started Section */
+.get-started {
+  background-color: #004080;
+  color: white;
+  padding: 60px 20px;
+}
+
+.get-started-container {
+  text-align: center;
+}
+
+.get-started-title {
+  font-weight: 600;
+  margin-bottom: 3rem;
+}
+
+.get-started-description {
+  font-weight: 300;
+  margin-bottom: 4rem;
+}
+
+.get-started-button {
+  background-color: #006bb3;
+  padding: 12px 30px;
+  font-size: 18px;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.get-started-button:hover {
+  background-color: #00599e;
+}
+
+/* Footer Section */
+.footer {
+  background-color: #333;
+  color: white;
+  padding: 20px;
+}
+
+.footer-text {
+  text-align: center;
+  font-size: 14px;
+}

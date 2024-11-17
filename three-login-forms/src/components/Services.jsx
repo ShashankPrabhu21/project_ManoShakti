@@ -3,39 +3,55 @@ import { Container, Typography, Box, List, ListItem, ListItemText, Divider } fro
 
 const Services = () => {
   return (
-    <Container maxWidth="md" sx={{ paddingTop: '20px', paddingBottom: '20px' }}>
+    <Container maxWidth="md" sx={{ paddingTop: '40px', paddingBottom: '40px' }}>
       <Box
         sx={{
-          padding: '20px',
-          backgroundColor: 'white',
-          borderRadius: '8px',
-          boxShadow: 3,
+          padding: '30px',
+          backgroundColor: '#f9f9f9',
+          borderRadius: '12px',
+          boxShadow: 4,
           textAlign: 'center',
         }}
       >
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
+        {/* Title Section */}
+        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main' }}>
           Our Services
         </Typography>
-        <Typography variant="body1" paragraph>
-          We offer a variety of services tailored to meet the needs of students, parents, and counselors, including:
+        <Typography variant="body1" paragraph sx={{ color: '#666', mb: 3, textAlign: 'justify' }}>
+          We provide a range of services aimed at supporting students' academic, emotional, and career growth. Our holistic approach is tailored to the needs of students, parents, and counselors, ensuring that each individual receives the guidance they need.
         </Typography>
-        <List sx={{ textAlign: 'left' }}>
+
+        {/* Services List */}
+        <List sx={{ textAlign: 'left', mx: 'auto', maxWidth: '600px' }}>
           <ListItem>
-            <ListItemText primary="Academic Counseling" secondary="Guidance on course selection, study strategies, and academic performance." />
+            <ListItemText 
+              primary={<Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.dark', textAlign: 'left' }}>Academic Counseling</Typography>} 
+              secondary={<Typography sx={{ textAlign: 'justify', color: '#666' }}>Personalized guidance on course selection, study techniques, and improving academic performance, designed to help students succeed in their educational journey.</Typography>}
+            />
           </ListItem>
           <ListItem>
-            <ListItemText primary="Mental Health Support" secondary="Access to resources for managing stress, anxiety, and other mental health concerns." />
+            <ListItemText 
+              primary={<Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.dark', textAlign: 'left' }}>Mental Health Support</Typography>} 
+              secondary={<Typography sx={{ textAlign: 'justify', color: '#666' }}>Resources and support for managing stress, anxiety, and other mental health challenges. Our goal is to foster resilience and emotional well-being.</Typography>}
+            />
           </ListItem>
           <ListItem>
-            <ListItemText primary="Career Guidance" secondary="Advice on career planning, resume building, and job interview preparation." />
+            <ListItemText 
+              primary={<Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.dark', textAlign: 'left' }}>Career Guidance</Typography>} 
+              secondary={<Typography sx={{ textAlign: 'justify', color: '#666' }}>Career planning support, including resume building, interview preparation, and insights into potential career paths to align with students’ skills and aspirations.</Typography>}
+            />
           </ListItem>
         </List>
-        <Divider sx={{ my: 3 }} />
-        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+
+        {/* Divider */}
+        <Divider sx={{ my: 4 }} />
+
+        {/* Specialized Programs Section */}
+        <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
           Specialized Programs
         </Typography>
-        <Typography variant="body2" paragraph>
-          We also offer specialized programs, such as our ASRS, FOMO, and DASS assessments, which are designed to help students manage their mental health effectively. Through these services, we empower students to reach their full potential.
+        <Typography variant="body2" paragraph sx={{ color: '#666', mx: 'auto', maxWidth: '600px', textAlign: 'justify' }}>
+          Our specialized programs include evidence-based assessments like the ASRS (Adult ADHD Self-Report Scale), FOMO (Fear of Missing Out) questionnaire, and DASS (Depression Anxiety Stress Scales). These tools are crafted to support students in identifying and managing their mental health needs. Through these services, we aim to empower students to achieve personal and academic well-being.
         </Typography>
       </Box>
     </Container>
