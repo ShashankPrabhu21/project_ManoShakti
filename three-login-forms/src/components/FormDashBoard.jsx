@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Tabs, Tab, Box, Typography, Container } from '@mui/material';
-import ADHDForm from './ADHDForm';
-import DASSForm from './DASSForm';
+import ADHDForm from './adhdform';
+import DASSForm from './dassform';
 
 const FormDashboard = () => {
   const [activeTab, setActiveTab] = useState(0);

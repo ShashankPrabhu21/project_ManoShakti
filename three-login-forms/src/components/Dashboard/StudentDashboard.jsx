@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { auth, db } from '../../firebaseConfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import ADHDForm from '../ADHD/AdhdForm';
-import DASSForm from '../DASS/DASSForm';
-import FOMOForm from '../FOMO/FOMOForm';
+import ADHDForm from '../adhdform';
+import DASSForm from '../dassform';
+import FOMOForm from '../fomoform';
 import {
   Container,
   Typography,
