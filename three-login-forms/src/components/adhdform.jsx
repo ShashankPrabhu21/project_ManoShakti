@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { addDoc, collection } from "firebase/firestore";
-import db from "../firebaseConfig";
+import {db} from "../firebaseConfig";
 import "./threeform_style.css";
 
 const ADHDForm = () => {
