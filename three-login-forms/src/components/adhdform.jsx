@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import { addDoc, collection } from "firebase/firestore";
-import {db} from "../firebaseConfig";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 import "./threeform_style.css";
 
-const ADHDForm = () => {
-  const [responses, setResponses] = useState(
-    Array(18).fill("") // Initializes an array of 18 empty strings
-  );
+const ADHDForm = ({ studentId }) => {
+  const [responses, setResponses] = useState(Array(18).fill("")); // Initializes an array of 18 empty strings
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [flashMessage, setFlashMessage] = useState(null); // Initialize flashMessage state
 
@@ -42,7 +40,7 @@ const ADHDForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (responses.includes(null)) {
+    if (responses.includes("")) {
       triggerFlashMessage("Please answer all questions.", "error");
       return;
     }
@@ -70,7 +68,14 @@ const ADHDForm = () => {
     const total_score = parta_score + partb_score;
 
     try {
-      await addDoc(collection(db, "adhd_responses"), {
+      // Reference to the student document and ADHD responses subcollection
+      const studentRef = doc(db, "students", studentId); // Using studentId (e.g., USN) as the document ID
+
+      // Save ADHD responses in the 'adhdresponses' subcollection of the student
+      const adhdResponsesRef = collection(studentRef, "adhdresponses");
+
+      // Adding a new document with the ADHD responses
+      await addDoc(adhdResponsesRef, {
         responses: numericalResponses,
         parta_score,
         partb_score,
@@ -80,11 +85,14 @@ const ADHDForm = () => {
         total_score,
         submittedAt: new Date(),
       });
+
       triggerFlashMessage("Response saved successfully!", "success");
-      setResponses(Array(18).fill(null));
+      setResponses(Array(18).fill("")); // Reset responses after submission
     } catch (error) {
       console.error("Error saving responses: ", error);
       triggerFlashMessage("Failed to save the response. Please try again.", "error");
+    } finally {
+      setIsSubmitting(false); // Reset submission state
     }
   };
 
@@ -125,9 +133,8 @@ const ADHDForm = () => {
           </div>
         ))}
         <button type="submit" className="submit-button" disabled={isSubmitting}>
-  Submit
-</button>
-
+          Submit
+        </button>
       </form>
     </div>
   );
