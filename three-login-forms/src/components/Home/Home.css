@@ -10,10 +10,18 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  background-color: #004080; /* Dark blue background */
-  color: white;
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.7), /* White with 70% opacity */
+      rgba(255, 255, 255, 0.7)
+    ),
+    url('councelling.jpeg'); /* Image URL */
+  background-size: cover;
+  background-position: center;
+  color: #006bb3; /* Change text color to blue */
   padding: 0 20px;
 }
+
+
 
 .hero-title {
   font-weight: 600;

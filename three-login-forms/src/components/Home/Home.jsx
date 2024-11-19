@@ -96,7 +96,7 @@ const Home = () => {
           <Button
             variant="contained"
             className="get-started-button"
-            onClick={() => navigate('/signup')}
+            onClick={() => navigate('/login')}
           >
             Get Started
           </Button>
