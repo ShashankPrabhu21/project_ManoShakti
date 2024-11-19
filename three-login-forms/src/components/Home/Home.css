@@ -14,14 +14,12 @@
       rgba(255, 255, 255, 0.7), /* White with 70% opacity */
       rgba(255, 255, 255, 0.7)
     ),
-    url('councelling.jpeg'); /* Image URL */
+    url('councelling.png'); /* Replace with the correct image URL */
   background-size: cover;
   background-position: center;
-  color: #006bb3; /* Change text color to blue */
+  color: #006bb3; /* Text color */
   padding: 0 20px;
 }
-
-
 
 .hero-title {
   font-weight: 600;
@@ -39,6 +37,8 @@
   padding: 10px 20px;
   border-radius: 5px;
   font-size: 16px;
+  color: white; /* Ensure button text is visible */
+  text-decoration: none; /* Remove underline */
 }
 
 .hero-button:hover {
@@ -59,10 +59,13 @@
 
 .nav-button {
   color: #004080;
-  border-color: #004080;
+  border: 1px solid #004080;
   padding: 12px 24px;
   border-radius: 5px;
   font-size: 16px;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
 }
 
 .nav-button:hover {
@@ -70,6 +73,7 @@
   color: white;
 }
 
+/* Responsive Adjustments */
 @media (max-width: 600px) {
   .nav-button {
     width: 100%; /* Make buttons full width on mobile */
@@ -129,7 +133,10 @@
   padding: 12px 30px;
   font-size: 18px;
   border-radius: 5px;
-  width: 100%;
+  color: white; /* Ensure button text is visible */
+  text-decoration: none; /* Remove underline */
+  display: inline-block;
+  text-align: center;
 }
 
 .get-started-button:hover {

@@ -7,7 +7,7 @@
     width: 100%;
     box-sizing: border-box;
 }
-  
+
 /* Logo image as a background */
 .logo-link {
     text-decoration: none;
@@ -19,14 +19,83 @@
     background-position: center; /* Centers the image within the container */
     margin-right: auto; /* Pushes other elements to the right */
 }
-  
+
 /* Buttons container */
 .nav-buttons {
     display: flex;
     gap: 1rem; /* Adds spacing between buttons */
 }
 
-/* Mobile menu and general styles */
+/* Individual nav items */
+.nav-menu li {
+    position: relative;
+    margin: 0 1rem;
+}
+
+/* Uniform button styling for all navigation buttons */
+.nav-menu li a,
+.nav-button {
+    color: #004080;
+    border-color: #004080;
+    padding: 12px 24px; /* Consistent padding */
+    border-radius: 5px;
+    font-size: 16px; /* Same font size for all buttons */
+    text-decoration: none;
+    display: flex; /* Flexbox to ensure buttons are the same height */
+    align-items: center;
+    justify-content: center;
+    min-width: 150px; /* Set a minimum width for consistency */
+    height: 50px; /* Same height for all buttons */
+    transition: background 0.3s;
+}
+
+/* Hover effects for buttons */
+.nav-menu li a:hover,
+.nav-button:hover {
+    background-color: #004080;
+    color: white;
+}
+
+/* Dropdown styling */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: rgb(69, 74, 77);
+    min-width: 120px;
+    z-index: 1;
+    border: 1px solid #000;
+    padding: 0.5rem 0;
+    border-radius: 4px;
+}
+
+/* Show dropdown on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Dropdown link styling */
+.dropdown-content a {
+    color: white;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    display: block;
+}
+
+/* Hover effects inside dropdown */
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+    color: black;
+}
+
+/* Hamburger menu icon for smaller screens */
+.hamburger {
+    display: none; /* Hidden on larger screens */
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: white;
+}
+
+/* Responsive Navbar adjustments */
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;
@@ -34,7 +103,7 @@
     }
     .nav-menu {
         display: none;
-        flex-direction: row;
+        flex-direction: column;
         width: 100%;
     }
     .hamburger {
@@ -43,8 +112,31 @@
     .nav-menu.active {
         display: flex;
     }
+
+    /* Mobile-specific navigation button styles */
+    .nav-menu li a,
+    .nav-button {
+        color: #004080;
+        border-color: #004080;
+        padding: 12px 24px;
+        border-radius: 5px;
+        font-size: 16px;
+        width: 100%; /* Full width for buttons on mobile */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 150px;
+        height: 50px;
+    }
+
+    /* Hover effects for buttons on mobile */
+    .nav-menu li a:hover,
+    .nav-button:hover {
+        background-color: #004080;
+        color: white;
+    }
 }
-/* Logo text styling */
+
 /* Logo text styling */
 .logo-text {
     font-family: 'Arial', sans-serif;
@@ -53,5 +145,4 @@
     color: #ffffff; /* Adjust text color */
     margin-left: 8px; /* Space between logo and text */
     text-decoration: none; /* Remove underline */
-  }
-  
+}
