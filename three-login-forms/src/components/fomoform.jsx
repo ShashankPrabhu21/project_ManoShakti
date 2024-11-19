@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { addDoc, collection } from "firebase/firestore";
-import {db} from "../firebaseConfig";
+
+import {db}from "../firebaseConfig";
 import "./threeform_style.css"; // Assuming this CSS is the same for all forms (DASS, ADHD, FOMO)
 
 const FOMOForm = () => {

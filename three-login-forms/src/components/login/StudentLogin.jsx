@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { auth, db } from '../../firebaseConfig'; // Import your Firebase config
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore'; // Firestore functions
+import { auth } from '../../firebaseConfig'; // Import your Firebase config
+import { signInWithEmailAndPassword } from 'firebase/auth'; // Firebase Authentication
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Container,
@@ -19,30 +18,34 @@ function StudentLogin({ handleAuthentication }) {
   const [error, setError] = useState('');
   const navigate = useNavigate(); // Hook for navigation
 
+  // Clear error message when closing the Snackbar
+  const handleCloseSnackbar = () => {
+    setError('');
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(''); // Reset error message
+    setError(''); // Reset any existing error message
 
     try {
-      // Sign in with email and password
+      // Sign in with email and password using Firebase Authentication
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Check if user data exists in Firestore 'students' collection
-      const studentRef = doc(db, 'students', user.uid);
-      const studentSnapshot = await getDoc(studentRef);
-
-      if (studentSnapshot.exists()) {
-        // If user exists, trigger authentication and navigate to student dashboard
-        handleAuthentication(true, 'student');
-        navigate('/student-dashboard'); // Navigate to the dashboard
-      } else {
-        // If user data doesn't exist, show error
-        setError('No data found for this user. Please contact support.');
-      }
+      // Trigger authentication and navigate to student dashboard
+      handleAuthentication(true, 'student');
+      navigate('/student-dashboard'); // Navigate to the student dashboard
     } catch (error) {
-      // Display any login error
-      setError(error.message);
+      // Firebase-specific error handling
+      if (error.code === 'auth/user-not-found') {
+        setError('No user found with this email.');
+      } else if (error.code === 'auth/wrong-password') {
+        setError('Incorrect password. Please try again.');
+      } else if (error.code === 'auth/invalid-email') {
+        setError('Invalid email format. Please check and try again.');
+      } else {
+        setError('An error occurred during login. Please try again later.');
+      }
     }
   };
 
@@ -75,25 +78,25 @@ function StudentLogin({ handleAuthentication }) {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <Button 
-            type="submit" 
-            variant="contained" 
-            color="primary" 
-            fullWidth 
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
             sx={{ mt: 2 }}
           >
             Login
           </Button>
         </form>
 
-        {/* Display error message */}
-        <Snackbar 
-          open={Boolean(error)} 
-          autoHideDuration={6000} 
-          onClose={() => setError('')}
+        {/* Display error message using Snackbar */}
+        <Snackbar
+          open={Boolean(error)}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // Adjust position
         >
-          <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
+          <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
             {error}
           </Alert>
         </Snackbar>
