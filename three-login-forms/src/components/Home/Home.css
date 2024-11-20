@@ -1,7 +1,7 @@
+
+
 /* Home Container */
-.home-container {
-  font-family: 'Arial', sans-serif;
-}
+
 
 /* Hero Section */
 .hero-section {
@@ -9,28 +9,55 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
+  text-align: 20px;
   background-image: linear-gradient(
       rgba(255, 255, 255, 0.7), /* White with 70% opacity */
       rgba(255, 255, 255, 0.7)
     ),
     url('councelling.png'); /* Replace with the correct image URL */
+  background-position: left center;
   background-size: cover;
   background-position: center;
-  color: #006bb3; /* Text color */
+  color: n; /* Text color */
   padding: 0 20px;
+  animation: fade-in 2s ease-in;
 }
 
+
+
+/* Add animation for Hero Title and Subtitle */
+@keyframes slide-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px); /* Start above */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0); /* End at the original position */
+  }
+}
+
+/* Hero Title */
 .hero-title {
-  font-weight: 600;
-  font-size: 3rem;
+  font-family:Verdana, Geneva, Tahoma, sans-serif; /* Apply Playfair Display font */
+  font-weight: 600; /* Choose appropriate weight */
+  font-size: 1rem; /* Adjust the size as needed */
+  color: #006bb3; /* Retain the color */
+  animation: slide-in 1.5s ease-out forwards;
 }
 
+/* Hero Subtitle */
 .hero-subtitle {
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;/* Use a contrasting font for the subtitle */
   margin-top: 2rem;
   font-weight: 300;
+  font-size: 1.2rem;
+  color: #006bb3;
+  animation: slide-in 2s ease-out forwards; /* Slight delay for subtitle animation */
+  animation-delay: 0.5s; /* Start after the title animation */
 }
 
+/* Hero Button */
 .hero-button {
   margin-top: 3rem;
   background-color: #006bb3;
@@ -51,10 +78,11 @@
 }
 
 .section-title {
-  font-weight: 500;
-  color: #333;
+  font-weight: 700;
+  color:#333;
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2rem !important; /* Force margin */ /* Adjusted margin between title and buttons */
+  font-family: 'Roboto', sans-serif; /* Add your preferred font family here */
 }
 
 .nav-button {
@@ -66,12 +94,14 @@
   text-decoration: none;
   display: inline-block;
   text-align: center;
+  margin-top: 1rem; /* Added space between the buttons if there are multiple buttons */
 }
 
 .nav-button:hover {
   background-color: #004080;
   color: white;
 }
+
 
 /* Responsive Adjustments */
 @media (max-width: 600px) {
@@ -153,4 +183,14 @@
 .footer-text {
   text-align: center;
   font-size: 14px;
+}
+
+/* Add a fade-in effect for the entire section */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

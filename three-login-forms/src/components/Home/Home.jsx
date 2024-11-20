@@ -8,24 +8,27 @@ const Home = () => {
 
   return (
     <Box className="home-container">
-      {/* Hero Section */}
-      <Box className="hero-section">
-        <Box>
-          <Typography variant="h2" className="hero-title">
-            Welcome to ManoShakti
-          </Typography>
-          <Typography variant="h6" className="hero-subtitle">
-            Empowering student mental health with personalized assessments and support.
-          </Typography>
-          <Button
-            variant="contained"
-            className="hero-button"
-            onClick={() => navigate('/about')}
-          >
-            Learn More
-          </Button>
-        </Box>
-      </Box>
+  {/* Hero Section */}
+  <Box className="hero-section">
+    <Box>
+      <Typography variant="h1" className="hero-title">
+      <span className="highlight">ManoShakti</span>
+      </Typography>
+
+      <Typography variant="h6" className="hero-subtitle">
+        Empowering student mental health with personalized assessments and support.
+      </Typography>
+      <Button
+        variant="contained"
+        className="hero-button"
+        onClick={() => navigate('/about')}
+      >
+        Learn More
+      </Button>
+    </Box>
+  </Box>
+
+
 
       {/* Explore Our Sections */}
       <Box className="explore-sections">
@@ -143,12 +146,7 @@ const Home = () => {
         </Container>
       </Box>
 
-      {/* Footer Section */}
-      <Box className="footer">
-        <Typography className="footer-text">
-          © {new Date().getFullYear()} ManoShakti. All rights reserved.
-        </Typography>
-      </Box>
+      
     </Box>
   );
 };

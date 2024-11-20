@@ -15,21 +15,7 @@ function WelcomeSection() {
             mb: 4,
           }}
         >
-          <Typography 
-            variant="h2" 
-            component="h1" 
-            gutterBottom 
-            sx={{ color: '#3f51b5' }} // Primary color for the heading
-          >
-            Welcome to ManoShakti
-          </Typography>
-          <Typography 
-            variant="h6" 
-            component="p" 
-            sx={{ color: '#555' }} // Darker color for the paragraph
-          >
-            Your one-stop solution for student psychological health assessments.
-          </Typography>
+          
         </Box>
       </Container>
     </main>
