@@ -17,7 +17,6 @@ function StudentLogin({ handleAuthentication }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate(); // Hook for navigation
-
   // Clear error message when closing the Snackbar
   const handleCloseSnackbar = () => {
     setError('');

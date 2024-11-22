@@ -3,7 +3,8 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { db } from '../../firebaseConfig';
 import { doc, setDoc, collection } from 'firebase/firestore';
-
+import {useDispatch} from 'react-redux';
+import { loginSuccess } from '../../redux/authSlice';
 function StudentRegister() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -16,7 +17,7 @@ function StudentRegister() {
   const [weight, setWeight] = useState('');
   const [contact, setContact] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+const dispatch=useDispatch();
   const auth = getAuth();
 
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -48,7 +49,7 @@ function StudentRegister() {
       const studentRef = doc(db, 'students', usn); // Using USN as the student ID
 
       // Add registration details to 'details' subcollection
-     
+     dispatch(loginSuccess(usn));
       // Add registration details directly to 'details' subcollection
       const detailsRef = collection(studentRef, 'details');
       await setDoc(doc(detailsRef, usn), {  // Using USN as document ID in the subcollection

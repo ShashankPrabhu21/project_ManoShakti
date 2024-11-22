@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { addDoc, collection } from "firebase/firestore";
-import {db} from "../firebaseConfig";
+import { db } from "../firebaseConfig";
 import "./threeform_style.css";
-
+import { useSelector } from "react-redux";
 const DASSForm = () => {
   const [responses, setResponses] = useState(Array(21).fill(null));
   const [flashMessage, setFlashMessage] = useState(null);
-
+  const { isAuthenticated, usn } = useSelector((state) => state.auth);
   const questions = [
     "I found it hard to wind down",
     "I was aware of dryness of my mouth",
@@ -76,14 +76,21 @@ const DASSForm = () => {
       const stressScore =
         stressQuestions.reduce((sum, q) => sum + responses[q], 0) * 2;
 
-      const depressionSeverity = calculateSeverity(depressionScore, "Depression");
+      const depressionSeverity = calculateSeverity(
+        depressionScore,
+        "Depression"
+      );
       const anxietySeverity = calculateSeverity(anxietyScore, "Anxiety");
       const stressSeverity = calculateSeverity(stressScore, "Stress");
-
-      await addDoc(collection(db, "dass_responses"), {
+      console.log("USN : ", usn);
+      await addDoc(collection(db, `students/4SO21CS004/dass_responses`), {
         responses,
-        depressionScore, anxietyScore, stressScore,
-        depressionSeverity, anxietySeverity, stressSeverity,
+        depressionScore,
+        anxietyScore,
+        stressScore,
+        depressionSeverity,
+        anxietySeverity,
+        stressSeverity,
         submittedAt: new Date(),
       });
 
@@ -91,7 +98,10 @@ const DASSForm = () => {
       setResponses(Array(21).fill(null));
     } catch (error) {
       console.error("Error saving responses: ", error);
-      triggerFlashMessage("Failed to save the response. Please try again.", "error");
+      triggerFlashMessage(
+        "Failed to save the response. Please try again.",
+        "error"
+      );
     }
   };
 
@@ -140,7 +150,7 @@ const DASSForm = () => {
           </div>
         ))}
         <button type="submit" className="submit-button">
-          Submit
+          Submit 
         </button>
       </form>
     </div>

@@ -22,10 +22,12 @@ import CounselorDashboard from './components/Dashboard/CounselorDashboard';
 
 import MainLayout from './components/Home/MainLayout'; // Import MainLayout component
 
+import {useDispatch} from 'react-redux';
+import { logoutSuccess } from './redux/authSlice';
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [userType, setUserType] = useState('');
-
+const dispatch=useDispatch();
   const handleAuthentication = (authStatus, type) => {
     setAuthenticated(authStatus);
     setUserType(type);
@@ -34,6 +36,7 @@ function App() {
   const handleLogout = () => {
     setAuthenticated(false);
     setUserType('');
+    dispatch(logoutSuccess());
   };
 
   return (
