@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { auth } from '../../firebaseConfig'; // Import your Firebase config
-import { signInWithEmailAndPassword } from 'firebase/auth'; // Firebase Authentication
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth'; // Firebase Authentication
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Container,
@@ -16,11 +16,13 @@ function StudentLogin({ handleAuthentication }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   const navigate = useNavigate(); // Hook for navigation
 
-  // Clear error message when closing the Snackbar
+  // Clear error and snackbar messages when closing the Snackbar
   const handleCloseSnackbar = () => {
     setError('');
+    setSnackbarMessage('');
   };
 
   const handleLogin = async (e) => {
@@ -45,6 +47,26 @@ function StudentLogin({ handleAuthentication }) {
         setError('Invalid email format. Please check and try again.');
       } else {
         setError('An error occurred during login. Please try again later.');
+      }
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError('Please enter your email to reset your password.');
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setSnackbarMessage('Password reset email sent. Check your inbox.');
+    } catch (error) {
+      if (error.code === 'auth/user-not-found') {
+        setError('No user found with this email.');
+      } else if (error.code === 'auth/invalid-email') {
+        setError('Invalid email format. Please check and try again.');
+      } else {
+        setError('An error occurred while sending the reset email. Please try again later.');
       }
     }
   };
@@ -89,15 +111,29 @@ function StudentLogin({ handleAuthentication }) {
           </Button>
         </form>
 
-        {/* Display error message using Snackbar */}
+        <Button
+          variant="text"
+          color="secondary"
+          fullWidth
+          sx={{ mt: 1 }}
+          onClick={handleForgotPassword}
+        >
+          Forgot Password?
+        </Button>
+
+        {/* Display error or success messages using Snackbar */}
         <Snackbar
-          open={Boolean(error)}
+          open={Boolean(error || snackbarMessage)}
           autoHideDuration={6000}
           onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // Adjust position
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
-          <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-            {error}
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={error ? 'error' : 'success'}
+            sx={{ width: '100%' }}
+          >
+            {error || snackbarMessage}
           </Alert>
         </Snackbar>
 
