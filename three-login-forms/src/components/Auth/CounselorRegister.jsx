@@ -3,7 +3,6 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { auth, db } from '../../firebaseConfig'; 
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
 
 function CounselorRegister() {
   const [name, setName] = useState('');
@@ -11,8 +10,6 @@ function CounselorRegister() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  
-  const navigate = useNavigate(); 
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -32,7 +29,13 @@ function CounselorRegister() {
       });
 
       alert('Counselor registration successful');
-      navigate('/counselor-dashboard');
+
+      // Clear form fields
+      setName('');
+      setContact('');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
     } catch (error) {
       alert(error.message);
     }
@@ -66,12 +69,57 @@ function CounselorRegister() {
           boxSizing: 'border-box',
         }}
       >
-        <TextField fullWidth label="Name" value={name} onChange={(e) => setName(e.target.value)} margin="normal" />
-        <TextField fullWidth label="Contact Number" value={contact} onChange={(e) => setContact(e.target.value)} margin="normal" />
-        <TextField fullWidth label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} margin="normal" />
-        <TextField fullWidth label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} margin="normal" />
-        <TextField fullWidth label="Confirm Password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} margin="normal" />
-        <Button fullWidth variant="contained" color="primary" type="submit">Register</Button>
+        <TextField 
+          fullWidth 
+          label="Name" 
+          value={name} 
+          onChange={(e) => setName(e.target.value)} 
+          margin="normal" 
+          required 
+        />
+        <TextField 
+          fullWidth 
+          label="Contact Number" 
+          value={contact} 
+          onChange={(e) => setContact(e.target.value)} 
+          margin="normal" 
+          required 
+        />
+        <TextField 
+          fullWidth 
+          label="Email" 
+          type="email" 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+          margin="normal" 
+          required 
+        />
+        <TextField 
+          fullWidth 
+          label="Password" 
+          type="password" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+          margin="normal" 
+          required 
+        />
+        <TextField 
+          fullWidth 
+          label="Confirm Password" 
+          type="password" 
+          value={confirmPassword} 
+          onChange={(e) => setConfirmPassword(e.target.value)} 
+          margin="normal" 
+          required 
+        />
+        <Button 
+          fullWidth 
+          variant="contained" 
+          color="primary" 
+          type="submit"
+        >
+          Register
+        </Button>
       </Box>
     </Box>
   );

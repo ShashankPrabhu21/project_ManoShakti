@@ -43,15 +43,13 @@ function StudentRegister() {
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      
-      // Reference to the student document
-      const studentRef = doc(db, 'students', usn); // Using USN as the student ID
 
-      // Add registration details to 'details' subcollection
-     
+      // Reference to the student document
+      const studentRef = doc(db, 'students', usn);
+
       // Add registration details directly to 'details' subcollection
       const detailsRef = collection(studentRef, 'details');
-      await setDoc(doc(detailsRef, usn), {  // Using USN as document ID in the subcollection
+      await setDoc(doc(detailsRef, usn), {
         name,
         branch,
         section,
@@ -60,7 +58,20 @@ function StudentRegister() {
         contact,
         email,
       });
+
       alert('Registration successful');
+
+      // Clear the form
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+      setName('');
+      setUsn('');
+      setBranch('');
+      setSection('');
+      setAge('');
+      setWeight('');
+      setContact('');
     } catch (error) {
       console.error('Error registering user:', error);
       if (error.code === 'auth/email-already-in-use') {

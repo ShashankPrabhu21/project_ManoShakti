@@ -3,7 +3,6 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { auth, db } from '../../firebaseConfig'; 
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
 
 function ParentRegister() {
   const [parentName, setParentName] = useState('');
@@ -13,8 +12,6 @@ function ParentRegister() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  
-  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -36,7 +33,15 @@ function ParentRegister() {
       });
 
       alert('Parent registration successful');
-      navigate('/parent-dashboard');
+
+      // Clear form fields
+      setParentName('');
+      setStudentName('');
+      setStudentUsn('');
+      setContact('');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
     } catch (error) {
       alert(error.message);
     }
@@ -70,13 +75,13 @@ function ParentRegister() {
           boxSizing: 'border-box',
         }}
       >
-        <TextField fullWidth label="Parent Name" value={parentName} onChange={(e) => setParentName(e.target.value)} margin="normal" />
-        <TextField fullWidth label="Student Name" value={studentName} onChange={(e) => setStudentName(e.target.value)} margin="normal" />
-        <TextField fullWidth label="Student USN" value={studentUsn} onChange={(e) => setStudentUsn(e.target.value)} margin="normal" />
-        <TextField fullWidth label="Contact Number" value={contact} onChange={(e) => setContact(e.target.value)} margin="normal" />
-        <TextField fullWidth label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} margin="normal" />
-        <TextField fullWidth label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} margin="normal" />
-        <TextField fullWidth label="Confirm Password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} margin="normal" />
+        <TextField fullWidth label="Parent Name" value={parentName} onChange={(e) => setParentName(e.target.value)} margin="normal" required />
+        <TextField fullWidth label="Student Name" value={studentName} onChange={(e) => setStudentName(e.target.value)} margin="normal" required />
+        <TextField fullWidth label="Student USN" value={studentUsn} onChange={(e) => setStudentUsn(e.target.value)} margin="normal" required />
+        <TextField fullWidth label="Contact Number" value={contact} onChange={(e) => setContact(e.target.value)} margin="normal" required />
+        <TextField fullWidth label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} margin="normal" required />
+        <TextField fullWidth label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} margin="normal" required />
+        <TextField fullWidth label="Confirm Password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} margin="normal" required />
         <Button fullWidth variant="contained" color="primary" type="submit">Register</Button>
       </Box>
     </Box>
