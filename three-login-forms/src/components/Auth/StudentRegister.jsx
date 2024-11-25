@@ -1,188 +1,216 @@
-import React, { useEffect, useState } from 'react'; 
-import { auth, db } from '../../firebaseConfig';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import ADHDForm from '../adhdform';
-import DASSForm from '../dassform';
-import FOMOForm from '../fomoform';
-import {
-  Container,
-  Typography,
-  Card,
-  Box,
-  Button,
-  useMediaQuery,
-  Grid,
-} from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Button, TextField, Typography } from '@mui/material';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { db } from '../../firebaseConfig';
+import { doc, setDoc, collection } from 'firebase/firestore';
 
-function StudentDashboard() {
-  const [studentData, setStudentData] = useState(null);
-  const [activeForm, setActiveForm] = useState(null);
-  const [adhdSubmitted, setAdhdSubmitted] = useState(false);
-  const [dassSubmitted, setDassSubmitted] = useState(false);
-  const [fomoSubmitted, setFomoSubmitted] = useState(false);
+function StudentRegister() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState('');
+  const [usn, setUsn] = useState('');
+  const [branch, setBranch] = useState('');
+  const [section, setSection] = useState('');
+  const [age, setAge] = useState('');
+  const [weight, setWeight] = useState('');
+  const [contact, setContact] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const auth = getAuth();
 
-  useEffect(() => {
-    const fetchStudentData = async () => {
-      const studentId = auth.currentUser.uid;
-      const studentRef = doc(db, 'students', studentId);
-      const studentSnapshot = await getDoc(studentRef);
-      if (studentSnapshot.exists()) {
-        setStudentData(studentSnapshot.data());
-      } else {
-        console.log('No such student document!');
-      }
-    };
-    fetchStudentData();
-  }, []);
+  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleFormSubmit = async (formType) => {
-    const studentId = auth.currentUser.uid;
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    if (!name || !usn || !branch || !section || !age || !weight || !contact || !email || !password) {
+      alert('Please fill out all fields.');
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert('Passwords do not match.');
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
-      const studentRef = doc(db, 'students', studentId);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-      if (formType === 'adhd') setAdhdSubmitted(true);
-      if (formType === 'dass') setDassSubmitted(true);
-      if (formType === 'fomo') setFomoSubmitted(true);
+      // Reference to the student document
+      const studentRef = doc(db, 'students', usn);
 
-      await updateDoc(studentRef, {
-        [`forms.${formType}`]: true,
+      // Add registration details directly to 'details' subcollection
+      const detailsRef = collection(studentRef, 'details');
+      await setDoc(doc(detailsRef, usn), {
+        name,
+        branch,
+        section,
+        age,
+        weight,
+        contact,
+        email,
       });
 
-      alert(`${formType.toUpperCase()} Form submitted successfully!`);
-      setActiveForm(null);
+      alert('Registration successful');
+
+      // Clear the form
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+      setName('');
+      setUsn('');
+      setBranch('');
+      setSection('');
+      setAge('');
+      setWeight('');
+      setContact('');
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('Error registering user:', error);
+      if (error.code === 'auth/email-already-in-use') {
+        alert('This email is already registered.');
+      } else {
+        alert('An error occurred during registration. Please try again.');
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleButtonClick = (formType) => {
-    setActiveForm(activeForm === formType ? null : formType);
-  };
-
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Card sx={{ boxShadow: 3, p: 3, mb: 4 }}>
-        <Typography
-          variant="h4"
-          align="center"
-          gutterBottom
-          sx={{ fontWeight: 'bold', color: '#1565c0' }}
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        backgroundColor: '#f7f7f7',
+        paddingBottom: '60px',
+        paddingLeft: '1rem',
+        paddingRight: '1rem',
+      }}
+    >
+      <Typography variant="h4" gutterBottom>
+        Student Register
+      </Typography>
+      <Box
+        component="form"
+        onSubmit={handleRegister}
+        sx={{
+          maxWidth: '400px',
+          width: '100%',
+          backgroundColor: 'white',
+          padding: '20px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+          boxSizing: 'border-box',
+        }}
+      >
+        <TextField
+          fullWidth
+          label="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          margin="normal"
+          required
+        />
+        <TextField
+          fullWidth
+          label="USN"
+          value={usn}
+          onChange={(e) => setUsn(e.target.value)}
+          margin="normal"
+          required
+        />
+        <TextField
+          fullWidth
+          label="Branch"
+          value={branch}
+          onChange={(e) => setBranch(e.target.value)}
+          margin="normal"
+          required
+        />
+        <TextField
+          fullWidth
+          label="Section"
+          value={section}
+          onChange={(e) => setSection(e.target.value)}
+          margin="normal"
+          required
+        />
+        <TextField
+          fullWidth
+          label="Age"
+          value={age}
+          type="number"
+          onChange={(e) => setAge(e.target.value)}
+          margin="normal"
+          required
+        />
+        <TextField
+          fullWidth
+          label="Weight"
+          value={weight}
+          type="number"
+          onChange={(e) => setWeight(e.target.value)}
+          margin="normal"
+          required
+        />
+        <TextField
+          fullWidth
+          label="Contact Number"
+          value={contact}
+          onChange={(e) => setContact(e.target.value)}
+          margin="normal"
+          required
+        />
+        <TextField
+          fullWidth
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          margin="normal"
+          required
+        />
+        <TextField
+          fullWidth
+          label="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          margin="normal"
+          required
+        />
+        <TextField
+          fullWidth
+          label="Confirm Password"
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          margin="normal"
+          required
+        />
+        <Button
+          fullWidth
+          variant="contained"
+          color="primary"
+          type="submit"
+          disabled={isSubmitting}
         >
-          Student Dashboard
-        </Typography>
-
-        {studentData && (
-          <Box textAlign="center" sx={{ mb: 4 }}>
-            <Typography variant="h6">Welcome, {studentData.name}</Typography>
-          </Box>
-        )}
-      </Card>
-
-      <Box sx={{ textAlign: 'center', mb: 4 }}>
-        <Typography variant="h5" sx={{ mb: 2 }}>
-          Fill Your Questionnaires
-        </Typography>
-
-        <Grid container spacing={2} justifyContent="center">
-          {/* ADHD Form Button */}
-          <Grid item xs={12} sm="auto">
-            <Button
-              variant="outlined"
-              onClick={() => handleButtonClick('adhd')}
-              sx={{
-                width: isSmallScreen ? '100%' : 'auto',
-                paddingX: 4,
-                paddingY: 1.5,
-                fontSize: '1rem',
-                borderWidth: adhdSubmitted ? 3 : 1,
-                borderColor: adhdSubmitted ? '#43a047' : '#1976d2',
-                color: adhdSubmitted ? '#43a047' : '#1976d2',
-                borderRadius: 8,
-                fontWeight: 'bold',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  backgroundColor: adhdSubmitted ? '#dcedc8' : '#e3f2fd',
-                },
-              }}
-            >
-              ADHD Form
-            </Button>
-          </Grid>
-
-          {/* DASS Form Button */}
-          <Grid item xs={12} sm="auto">
-            <Button
-              variant="outlined"
-              onClick={() => handleButtonClick('dass')}
-              sx={{
-                width: isSmallScreen ? '100%' : 'auto',
-                paddingX: 4,
-                paddingY: 1.5,
-                fontSize: '1rem',
-                borderWidth: dassSubmitted ? 3 : 1,
-                borderColor: dassSubmitted ? '#43a047' : '#1976d2',
-                color: dassSubmitted ? '#43a047' : '#1976d2',
-                borderRadius: 8,
-                fontWeight: 'bold',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  backgroundColor: dassSubmitted ? '#dcedc8' : '#e3f2fd',
-                },
-              }}
-            >
-              DASS Form
-            </Button>
-          </Grid>
-
-          {/* FOMO Form Button */}
-          <Grid item xs={12} sm="auto">
-            <Button
-              variant="outlined"
-              onClick={() => handleButtonClick('fomo')}
-              sx={{
-                width: isSmallScreen ? '100%' : 'auto',
-                paddingX: 4,
-                paddingY: 1.5,
-                fontSize: '1rem',
-                borderWidth: fomoSubmitted ? 3 : 1,
-                borderColor: fomoSubmitted ? '#43a047' : '#1976d2',
-                color: fomoSubmitted ? '#43a047' : '#1976d2',
-                borderRadius: 8,
-                fontWeight: 'bold',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  backgroundColor: fomoSubmitted ? '#dcedc8' : '#e3f2fd',
-                },
-              }}
-            >
-              FOMO Form
-            </Button>
-          </Grid>
-        </Grid>
+          {isSubmitting ? 'Registering...' : 'Register'}
+        </Button>
       </Box>
-
-      <Box sx={{ mt: 4 }}>
-        {activeForm === 'adhd' && (
-          <Card sx={{ p: 3, mb: 3 }}>
-            <ADHDForm onSubmit={() => handleFormSubmit('adhd')} />
-          </Card>
-        )}
-        {activeForm === 'dass' && (
-          <Card sx={{ p: 3, mb: 3 }}>
-            <DASSForm onSubmit={() => handleFormSubmit('dass')} />
-          </Card>
-        )}
-        {activeForm === 'fomo' && (
-          <Card sx={{ p: 3, mb: 3 }}>
-            <FOMOForm onSubmit={() => handleFormSubmit('fomo')} />
-          </Card>
-        )}
-      </Box>
-    </Container>
+    </Box>
   );
 }
 
-export default StudentDashboard;
+export default StudentRegister;

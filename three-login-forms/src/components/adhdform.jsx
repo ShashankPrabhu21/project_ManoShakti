@@ -57,6 +57,7 @@ const ADHDForm = () => {
 
     const numericalResponses = responses.map((response) => optionToNumber[response]);
 
+    // Fixing the indexing issue: Adjusting to 0-based index
     const sumResponses = (questionIndexes) =>
       questionIndexes.reduce((sum, index) => sum + numericalResponses[index - 1], 0);
 
@@ -67,6 +68,16 @@ const ADHDForm = () => {
     const verbal_impulsive_subscale_score = sumResponses([14, 15, 16, 17]);
 
     const total_score = parta_score + partb_score;
+
+    let classification = "";
+
+    if (total_score < 14) {
+      classification = "Low";
+    } else if (total_score >= 15 && total_score <= 29) {
+      classification = "Medium";
+    } else {
+      classification = "High";
+    }
 
     try {
       // Reference to the student document and ADHD responses subcollection
@@ -84,6 +95,7 @@ const ADHDForm = () => {
         motor_impulsive_subscale_score,
         verbal_impulsive_subscale_score,
         total_score,
+        classification,
         submittedAt: new Date(),
       });
 
