@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { addDoc, collection } from "firebase/firestore";
-
-import {db}from "../firebaseConfig";
+import { addDoc, collection, doc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 import "./threeform_style.css"; // Assuming this CSS is the same for all forms (DASS, ADHD, FOMO)
 
 const FOMOForm = () => {
-  const [responses, setResponses] = useState(Array(10).fill(""));
+  const [responses, setResponses] = useState(Array(10).fill("")); // Initialize responses for 10 questions
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [flashMessage, setFlashMessage] = useState(null);
+  const [usn, setUsn] = useState(""); // Add state for USN
 
   const questions = [
     "I fear others have more rewarding experiences than me.",
@@ -65,13 +65,18 @@ const FOMOForm = () => {
     }
 
     try {
-      await addDoc(collection(db, "fomo_responses"), {
+      const studentRef = doc(db, "students", usn); // Reference to student document using USN
+
+      // Save FoMO responses in the 'fomo_responses' subcollection of the student
+      const fomoResponseRef = collection(studentRef, "fomo_responses");
+      await addDoc(fomoResponseRef, {
         responses: numericalResponses,
         totalScore,
         fomoScore,
         classification,
         submittedAt: new Date(),
       });
+
       triggerFlashMessage("Response saved successfully!", "success");
       setResponses(Array(10).fill("")); // Reset responses after submission
     } catch (error) {
@@ -107,6 +112,17 @@ const FOMOForm = () => {
       )}
       <h1 className="form-title">FoMO Survey</h1>
       <form onSubmit={handleSubmit} className="survey-form">
+        <div className="question-container">
+          <label className="question-text" htmlFor="usn">USN:</label>
+          <input
+            type="text"
+            id="usn"
+            value={usn}
+            onChange={(e) => setUsn(e.target.value)} // Set USN value
+            className="usn-input"
+            required
+          />
+        </div>
         {questions.map((question, index) => (
           <div className="question-container" key={`question${index + 1}`}>
             <p className="question-text">{`${index + 1}. ${question}`}</p>
