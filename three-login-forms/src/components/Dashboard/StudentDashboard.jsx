@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; 
 import { auth, db } from '../../firebaseConfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import ADHDForm from '../adhdform';
@@ -10,7 +10,6 @@ import {
   Card,
   Box,
   Button,
-  TextField,
   useMediaQuery,
   Grid,
 } from '@mui/material';
@@ -21,7 +20,6 @@ function StudentDashboard() {
   const [adhdSubmitted, setAdhdSubmitted] = useState(false);
   const [dassSubmitted, setDassSubmitted] = useState(false);
   const [fomoSubmitted, setFomoSubmitted] = useState(false);
-  const [password, setPassword] = useState('');
 
   const isSmallScreen = useMediaQuery('(max-width:600px)');
 
@@ -38,36 +36,6 @@ function StudentDashboard() {
     };
     fetchStudentData();
   }, []);
-
-  const validatePassword = (password) => {
-    if (password.length < 8) {
-      return 'Password must be at least 8 characters long.';
-    }
-    if (!/[A-Z]/.test(password)) {
-      return 'Password must contain at least one uppercase letter.';
-    }
-    if (!/[a-z]/.test(password)) {
-      return 'Password must contain at least one lowercase letter.';
-    }
-    if (!/[0-9]/.test(password)) {
-      return 'Password must contain at least one number.';
-    }
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      return 'Password must contain at least one special character.';
-    }
-    return ''; // No errors
-  };
-
-  const handlePasswordSubmit = () => {
-    const error = validatePassword(password);
-    if (error) {
-      // Show the error message as an alert
-      alert(`Password Validation Failed: ${error}`);
-    } else {
-      // Show success message only when the password is valid
-      alert('Password is valid!');
-    }
-  };
 
   const handleFormSubmit = async (formType) => {
     const studentId = auth.currentUser.uid;
@@ -213,30 +181,6 @@ function StudentDashboard() {
           </Card>
         )}
       </Box>
-
-      {/* Password Validation Section */}
-      <Card sx={{ boxShadow: 3, p: 3, mt: 4 }}>
-        <Typography variant="h5" sx={{ mb: 2, textAlign: 'center' }}>
-          Password Validation
-        </Typography>
-        <TextField
-          label="Enter Password"
-          type="password"
-          variant="outlined"
-          fullWidth
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          sx={{ mb: 2 }}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handlePasswordSubmit}
-          fullWidth
-        >
-          Validate Password
-        </Button>
-      </Card>
     </Container>
   );
 }
