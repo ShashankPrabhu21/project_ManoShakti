@@ -3,6 +3,7 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { db } from '../../firebaseConfig';
 import { doc, setDoc, collection } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function StudentRegister() {
   const [email, setEmail] = useState('');
@@ -18,35 +19,51 @@ function StudentRegister() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const auth = getAuth();
+  const navigate = useNavigate(); // Hook for navigation
 
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
+  
     if (!name || !usn || !branch || !section || !age || !weight || !contact || !email || !password) {
       alert('Please fill out all fields.');
       return;
     }
-
+  
     if (!isValidEmail(email)) {
       alert('Please enter a valid email address.');
       return;
     }
-
+  
+    if (password.length < 8) {
+      alert('Password must be at least 8 characters long.');
+      return;
+    }
+  
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      alert('Password must contain at least one special character.');
+      return;
+    }
+  
+    if (/^[0-9!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      alert('Password must not start with a digit or special character.');
+      return;
+    }
+  
     if (password !== confirmPassword) {
       alert('Passwords do not match.');
       return;
     }
-
+  
     setIsSubmitting(true);
-
+  
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
+  
       // Reference to the student document
       const studentRef = doc(db, 'students', usn);
-
+  
       // Add registration details directly to 'details' subcollection
       const detailsRef = collection(studentRef, 'details');
       await setDoc(doc(detailsRef, usn), {
@@ -58,20 +75,9 @@ function StudentRegister() {
         contact,
         email,
       });
-
+  
       alert('Registration successful');
-
-      // Clear the form
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
-      setName('');
-      setUsn('');
-      setBranch('');
-      setSection('');
-      setAge('');
-      setWeight('');
-      setContact('');
+      navigate('/login/student'); // Redirect to student login page
     } catch (error) {
       console.error('Error registering user:', error);
       if (error.code === 'auth/email-already-in-use') {
@@ -83,6 +89,7 @@ function StudentRegister() {
       setIsSubmitting(false);
     }
   };
+  
 
   return (
     <Box
@@ -114,98 +121,17 @@ function StudentRegister() {
           boxSizing: 'border-box',
         }}
       >
-        <TextField
-          fullWidth
-          label="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          margin="normal"
-          required
-        />
-        <TextField
-          fullWidth
-          label="USN"
-          value={usn}
-          onChange={(e) => setUsn(e.target.value)}
-          margin="normal"
-          required
-        />
-        <TextField
-          fullWidth
-          label="Branch"
-          value={branch}
-          onChange={(e) => setBranch(e.target.value)}
-          margin="normal"
-          required
-        />
-        <TextField
-          fullWidth
-          label="Section"
-          value={section}
-          onChange={(e) => setSection(e.target.value)}
-          margin="normal"
-          required
-        />
-        <TextField
-          fullWidth
-          label="Age"
-          value={age}
-          type="number"
-          onChange={(e) => setAge(e.target.value)}
-          margin="normal"
-          required
-        />
-        <TextField
-          fullWidth
-          label="Weight"
-          value={weight}
-          type="number"
-          onChange={(e) => setWeight(e.target.value)}
-          margin="normal"
-          required
-        />
-        <TextField
-          fullWidth
-          label="Contact Number"
-          value={contact}
-          onChange={(e) => setContact(e.target.value)}
-          margin="normal"
-          required
-        />
-        <TextField
-          fullWidth
-          label="Email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          margin="normal"
-          required
-        />
-        <TextField
-          fullWidth
-          label="Password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          margin="normal"
-          required
-        />
-        <TextField
-          fullWidth
-          label="Confirm Password"
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          margin="normal"
-          required
-        />
-        <Button
-          fullWidth
-          variant="contained"
-          color="primary"
-          type="submit"
-          disabled={isSubmitting}
-        >
+        <TextField fullWidth label="Name" value={name} onChange={(e) => setName(e.target.value)} margin="normal" required />
+        <TextField fullWidth label="USN" value={usn} onChange={(e) => setUsn(e.target.value)} margin="normal" required />
+        <TextField fullWidth label="Branch" value={branch} onChange={(e) => setBranch(e.target.value)} margin="normal" required />
+        <TextField fullWidth label="Section" value={section} onChange={(e) => setSection(e.target.value)} margin="normal" required />
+        <TextField fullWidth label="Age" type="number" value={age} onChange={(e) => setAge(e.target.value)} margin="normal" required />
+        <TextField fullWidth label="Weight" type="number" value={weight} onChange={(e) => setWeight(e.target.value)} margin="normal" required />
+        <TextField fullWidth label="Contact Number" value={contact} onChange={(e) => setContact(e.target.value)} margin="normal" required />
+        <TextField fullWidth label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} margin="normal" required />
+        <TextField fullWidth label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} margin="normal" required />
+        <TextField fullWidth label="Confirm Password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} margin="normal" required />
+        <Button fullWidth variant="contained" color="primary" type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Registering...' : 'Register'}
         </Button>
       </Box>
