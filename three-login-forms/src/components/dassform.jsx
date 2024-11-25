@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { addDoc, collection } from "firebase/firestore";
-import {db} from "../firebaseConfig";
+import { addDoc, collection,doc, setDoc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 import "./threeform_style.css";
 
 const DASSForm = () => {
   const [responses, setResponses] = useState(Array(21).fill(null));
+  const [usn, setUsn] = useState(""); // State to store the USN
   const [flashMessage, setFlashMessage] = useState(null);
 
   const questions = [
@@ -63,8 +64,8 @@ const DASSForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (responses.includes(null)) {
-      triggerFlashMessage("Please answer all questions.", "error");
+    if (responses.includes(null) || usn === "") {
+      triggerFlashMessage("Please answer all questions and provide your USN.", "error");
       return;
     }
 
@@ -80,14 +81,26 @@ const DASSForm = () => {
       const anxietySeverity = calculateSeverity(anxietyScore, "Anxiety");
       const stressSeverity = calculateSeverity(stressScore, "Stress");
 
-      await addDoc(collection(db, "dass_responses"), {
+      // Save the response inside the student's document in the Firestore collection
+      const studentRef = doc(db, "students", usn); // Reference to the student's document using USN
+      const dassResponseRef = collection(studentRef, "dass_responses"); // Create sub-collection for DASS responses
+
+      // Save the DASS response data
+      await addDoc(dassResponseRef, {
         responses,
-        depressionScore, anxietyScore, stressScore,
-        depressionSeverity, anxietySeverity, stressSeverity,
+        depressionScore,
+        anxietyScore,
+        stressScore,
+        depressionSeverity,
+        anxietySeverity,
+        stressSeverity,
         submittedAt: new Date(),
       });
 
+
+
       triggerFlashMessage("Response saved successfully!", "success");
+      setUsn(""); // Reset USN after submission
       setResponses(Array(21).fill(null));
     } catch (error) {
       console.error("Error saving responses: ", error);
@@ -120,6 +133,19 @@ const DASSForm = () => {
       )}
       <h1 className="form-title">DASS-21 Survey</h1>
       <form onSubmit={handleSubmit} className="dass-form">
+        {/* USN Input Field */}
+        <div className="question-container">
+          <label className="question-text" htmlFor="usn">USN:</label>
+          <input
+            type="text"
+            id="usn"
+            value={usn}
+            onChange={(e) => setUsn(e.target.value)}
+            className="usn-input"
+            required
+          />
+        </div>
+        
         {questions.map((question, idx) => (
           <div key={idx} className="question-container">
             <p className="question-text">{`${idx + 1}. ${question}`}</p>
