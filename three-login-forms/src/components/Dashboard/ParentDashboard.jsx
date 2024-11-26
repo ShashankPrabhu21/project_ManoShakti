@@ -7,6 +7,8 @@ function ParentDashboard() {
   const [usnInput, setUsnInput] = useState('');
   const [studentDetails, setStudentDetails] = useState(null);
   const [dassResponses, setDassResponses] = useState(null); // State for DASS responses
+  const [adhdResponses, setAdhdResponses] = useState(null); // State for ADHD responses
+  const [fomoResponses, setFomoResponses] = useState(null); // State for FoMO responses
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -30,11 +32,9 @@ function ParentDashboard() {
         const detailsSnapshot = await getDocs(detailsCollectionRef);
 
         if (!detailsSnapshot.empty) {
-          // Assuming only one document exists in the 'details' subcollection for each student
           const detailsDoc = detailsSnapshot.docs[0];
           const details = detailsDoc.data();
 
-          // Log details before setting state
           console.log('Setting student details:', {
             usn: usnInput,
             ...details,
@@ -54,7 +54,6 @@ function ParentDashboard() {
         const dassSnapshot = await getDocs(dassCollectionRef);
 
         if (!dassSnapshot.empty) {
-          // Assuming only one DASS document exists per student
           const dassDoc = dassSnapshot.docs[0];
           const dassData = dassDoc.data();
 
@@ -64,6 +63,36 @@ function ParentDashboard() {
           setDassResponses(null);
           setError(`No DASS responses found for student with USN: ${usnInput}`);
         }
+
+        // Fetch the ADHD responses from the 'adhd_responses' subcollection
+        const adhdCollectionRef = collection(studentDocRef, 'adhd_responses');
+        const adhdSnapshot = await getDocs(adhdCollectionRef);
+
+        if (!adhdSnapshot.empty) {
+          const adhdDoc = adhdSnapshot.docs[0];
+          const adhdData = adhdDoc.data();
+
+          console.log('Setting ADHD responses:', adhdData);
+          setAdhdResponses(adhdData);
+        } else {
+          setAdhdResponses(null);
+          setError(`No ADHD responses found for student with USN: ${usnInput}`);
+        }
+
+        // Fetch the FoMO responses from the 'fomo_responses' subcollection
+        const fomoCollectionRef = collection(studentDocRef, 'fomo_responses');
+        const fomoSnapshot = await getDocs(fomoCollectionRef);
+
+        if (!fomoSnapshot.empty) {
+          const fomoDoc = fomoSnapshot.docs[0];
+          const fomoData = fomoDoc.data();
+
+          console.log('Setting FoMO responses:', fomoData);
+          setFomoResponses(fomoData);
+        } else {
+          setFomoResponses(null);
+          setError(`No FoMO responses found for student with USN: ${usnInput}`);
+        }
       } else {
         setError(`No student found with USN: ${usnInput}`);
       }
@@ -72,6 +101,8 @@ function ParentDashboard() {
       setError('Error fetching student details. Please try again later.');
       setStudentDetails(null);
       setDassResponses(null);
+      setAdhdResponses(null);
+      setFomoResponses(null);
     } finally {
       setLoading(false);
     }
@@ -131,13 +162,31 @@ function ParentDashboard() {
         <Box sx={{ marginTop: '20px', textAlign: 'left' }}>
           <Typography variant="h6">DASS Responses:</Typography>
           <Box sx={{ marginBottom: '10px' }}>
-           
             <Typography><strong>Anxiety Severity:</strong> {dassResponses.anxietySeverity}</Typography>
-            
             <Typography><strong>Depression Severity:</strong> {dassResponses.depressionSeverity}</Typography>
-            
             <Typography><strong>Stress Severity:</strong> {dassResponses.stressSeverity}</Typography>
             <Typography><strong>Submitted At:</strong> {new Date(dassResponses.submittedAt.seconds * 1000).toLocaleString()}</Typography>
+          </Box>
+        </Box>
+      )}
+
+      {adhdResponses && (
+        <Box sx={{ marginTop: '20px', textAlign: 'left' }}>
+          <Typography variant="h6">ADHD Responses:</Typography>
+          <Box sx={{ marginBottom: '10px' }}>
+            <Typography><strong>Classification:</strong> {adhdResponses.classification}</Typography>
+            <Typography><strong>Submitted At:</strong> {new Date(adhdResponses.submittedAt.seconds * 1000).toLocaleString()}</Typography>
+          </Box>
+        </Box>
+      )}
+
+      {fomoResponses && (
+        <Box sx={{ marginTop: '20px', textAlign: 'left' }}>
+          <Typography variant="h6">FoMO Responses:</Typography>
+          <Box sx={{ marginBottom: '10px' }}>
+            <Typography><strong>Classification:</strong> {fomoResponses.classification}</Typography>
+            
+            <Typography><strong>Submitted At:</strong> {new Date(fomoResponses.submittedAt.seconds * 1000).toLocaleString()}</Typography>
             
           </Box>
         </Box>
