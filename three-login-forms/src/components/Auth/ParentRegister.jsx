@@ -4,6 +4,7 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { auth, db } from '../../firebaseConfig'; 
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 
 function ParentRegister() {
   const [parentName, setParentName] = useState('');
@@ -14,17 +15,42 @@ function ParentRegister() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  const navigate = useNavigate(); // Initialize useNavigate
+
   const handleRegister = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      alert('Passwords do not match');
+  
+    // Check if all fields are filled
+    if (!parentName || !studentName || !studentUsn || !contact || !email || !password || !confirmPassword) {
+      alert('Please fill out all fields.');
       return;
     }
-
+  
+    // Password validation
+    if (password.length < 8) {
+      alert('Password must be at least 8 characters long.');
+      return;
+    }
+  
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      alert('Password must contain at least one special character.');
+      return;
+    }
+  
+    if (/^[0-9!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      alert('Password must not start with a digit or special character.');
+      return;
+    }
+  
+    if (password !== confirmPassword) {
+      alert('Passwords do not match.');
+      return;
+    }
+  
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
+  
       await setDoc(doc(db, 'parents', user.uid), {
         parentName,
         studentName,
@@ -32,9 +58,9 @@ function ParentRegister() {
         contact,
         email,
       });
-
+  
       alert('Parent registration successful');
-
+  
       // Clear form fields
       setParentName('');
       setStudentName('');
@@ -43,10 +69,15 @@ function ParentRegister() {
       setEmail('');
       setPassword('');
       setConfirmPassword('');
+  
+      // Redirect to Parent Login page
+      navigate('/login/parent');
     } catch (error) {
       alert(error.message);
     }
   };
+  
+  
 
   return (
     <Box 

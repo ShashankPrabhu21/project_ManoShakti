@@ -3,6 +3,7 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { auth, db } from '../../firebaseConfig'; 
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function CounselorRegister() {
   const [name, setName] = useState('');
@@ -10,11 +11,35 @@ function CounselorRegister() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleRegister = async (e) => {
     e.preventDefault();
+
+    // Check if all fields are filled
+    if (!name || !contact || !email || !password || !confirmPassword) {
+      alert('Please fill out all fields.');
+      return;
+    }
+
+    // Password validation
+    if (password.length < 8) {
+      alert('Password must be at least 8 characters long.');
+      return;
+    }
+
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      alert('Password must contain at least one special character.');
+      return;
+    }
+
+    if (/^[0-9!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      alert('Password must not start with a digit or special character.');
+      return;
+    }
+
     if (password !== confirmPassword) {
-      alert('Passwords do not match');
+      alert('Passwords do not match.');
       return;
     }
 
@@ -30,12 +55,8 @@ function CounselorRegister() {
 
       alert('Counselor registration successful');
 
-      // Clear form fields
-      setName('');
-      setContact('');
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
+      // Redirect to login page after successful registration
+      navigate('/login/counselor');
     } catch (error) {
       alert(error.message);
     }
