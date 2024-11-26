@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { db } from '../../firebaseConfig'; // Make sure db is properly configured
+import { db } from '../../firebaseConfig'; // Ensure db is properly configured
 import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { Box, Button, TextField, Typography } from '@mui/material';
 
 function ParentDashboard() {
   const [usnInput, setUsnInput] = useState('');
   const [studentDetails, setStudentDetails] = useState(null);
+  const [dassResponses, setDassResponses] = useState(null); // State for DASS responses
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -47,6 +48,22 @@ function ParentDashboard() {
           setStudentDetails(null);
           setError(`No details found for student with USN: ${usnInput}`);
         }
+
+        // Fetch the DASS responses from the 'dass_responses' subcollection
+        const dassCollectionRef = collection(studentDocRef, 'dass_responses');
+        const dassSnapshot = await getDocs(dassCollectionRef);
+
+        if (!dassSnapshot.empty) {
+          // Assuming only one DASS document exists per student
+          const dassDoc = dassSnapshot.docs[0];
+          const dassData = dassDoc.data();
+
+          console.log('Setting DASS responses:', dassData);
+          setDassResponses(dassData);
+        } else {
+          setDassResponses(null);
+          setError(`No DASS responses found for student with USN: ${usnInput}`);
+        }
       } else {
         setError(`No student found with USN: ${usnInput}`);
       }
@@ -54,6 +71,7 @@ function ParentDashboard() {
       console.error('Error fetching student details:', err);
       setError('Error fetching student details. Please try again later.');
       setStudentDetails(null);
+      setDassResponses(null);
     } finally {
       setLoading(false);
     }
@@ -97,7 +115,6 @@ function ParentDashboard() {
       {studentDetails && (
         <Box sx={{ marginTop: '20px', textAlign: 'left' }}>
           <Typography variant="h6">Student Details:</Typography>
-          {/* Check if details is an object or array */}
           <Box sx={{ marginBottom: '10px' }}>
             <Typography><strong>Name:</strong> {studentDetails.name}</Typography>
             <Typography><strong>Age:</strong> {studentDetails.age}</Typography>
@@ -106,6 +123,22 @@ function ParentDashboard() {
             <Typography><strong>Contact:</strong> {studentDetails.contact}</Typography>
             <Typography><strong>Email:</strong> {studentDetails.email}</Typography>
             <Typography><strong>Weight:</strong> {studentDetails.weight}</Typography>
+          </Box>
+        </Box>
+      )}
+
+      {dassResponses && (
+        <Box sx={{ marginTop: '20px', textAlign: 'left' }}>
+          <Typography variant="h6">DASS Responses:</Typography>
+          <Box sx={{ marginBottom: '10px' }}>
+           
+            <Typography><strong>Anxiety Severity:</strong> {dassResponses.anxietySeverity}</Typography>
+            
+            <Typography><strong>Depression Severity:</strong> {dassResponses.depressionSeverity}</Typography>
+            
+            <Typography><strong>Stress Severity:</strong> {dassResponses.stressSeverity}</Typography>
+            <Typography><strong>Submitted At:</strong> {new Date(dassResponses.submittedAt.seconds * 1000).toLocaleString()}</Typography>
+            
           </Box>
         </Box>
       )}
