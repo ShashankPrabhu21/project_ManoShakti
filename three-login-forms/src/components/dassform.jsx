@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { addDoc, collection,doc, setDoc } from "firebase/firestore";
+import React, { useState } from "react"; 
+import { collection, doc, setDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import "./threeform_style.css";
 
@@ -63,12 +63,12 @@ const DASSForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (responses.includes(null) || usn === "") {
       triggerFlashMessage("Please answer all questions and provide your USN.", "error");
       return;
     }
-
+  
     try {
       const depressionScore =
         depressionQuestions.reduce((sum, q) => sum + responses[q], 0) * 2;
@@ -76,17 +76,19 @@ const DASSForm = () => {
         anxietyQuestions.reduce((sum, q) => sum + responses[q], 0) * 2;
       const stressScore =
         stressQuestions.reduce((sum, q) => sum + responses[q], 0) * 2;
-
+  
       const depressionSeverity = calculateSeverity(depressionScore, "Depression");
       const anxietySeverity = calculateSeverity(anxietyScore, "Anxiety");
       const stressSeverity = calculateSeverity(stressScore, "Stress");
-
-      // Save the response inside the student's document in the Firestore collection
-      const studentRef = doc(db, "students", usn); // Reference to the student's document using USN
-      const dassResponseRef = collection(studentRef, "dass_responses"); // Create sub-collection for DASS responses
-
-      // Save the DASS response data
-      await addDoc(dassResponseRef, {
+  
+      // Reference to the student's sub-collection for DASS responses
+      const subCollectionRef = doc(
+        collection(doc(db, "students", usn), "dass_responses"),
+        usn // Use USN as the document ID
+      );
+  
+      // Save the DASS response data inside the sub-collection
+      await setDoc(subCollectionRef, {
         responses,
         depressionScore,
         anxietyScore,
@@ -96,9 +98,7 @@ const DASSForm = () => {
         stressSeverity,
         submittedAt: new Date(),
       });
-
-
-
+  
       triggerFlashMessage("Response saved successfully!", "success");
       setUsn(""); // Reset USN after submission
       setResponses(Array(21).fill(null));
@@ -107,6 +107,7 @@ const DASSForm = () => {
       triggerFlashMessage("Failed to save the response. Please try again.", "error");
     }
   };
+  
 
   const handleChange = (e, index) => {
     const value = optionToNumber[e.target.value];

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { addDoc, collection, doc } from "firebase/firestore";
+import { setDoc, collection, doc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import "./threeform_style.css"; // Assuming this CSS is the same for all forms (DASS, ADHD, FOMO)
 
@@ -46,6 +46,11 @@ const FOMOForm = () => {
       return;
     }
 
+    if (!usn) {
+      triggerFlashMessage("Please provide a valid USN.", "error");
+      return;
+    }
+
     setIsSubmitting(true);
 
     const numericalResponses = responses.map((response) => optionToNumber[response]);
@@ -65,11 +70,11 @@ const FOMOForm = () => {
     }
 
     try {
-      const studentRef = doc(db, "students", usn); // Reference to student document using USN
+      // Reference to the 'fomo_responses' collection for the specified USN
+      const fomoResponseRef = doc(collection(doc(db, "students", usn), "fomo_responses"), usn);
 
-      // Save FoMO responses in the 'fomo_responses' subcollection of the student
-      const fomoResponseRef = collection(studentRef, "fomo_responses");
-      await addDoc(fomoResponseRef, {
+      // Use setDoc to specify the document ID explicitly
+      await setDoc(fomoResponseRef, {
         responses: numericalResponses,
         totalScore,
         fomoScore,
