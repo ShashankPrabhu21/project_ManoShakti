@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { addDoc, collection, doc } from "firebase/firestore";
+import { setDoc, doc, collection } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import "./threeform_style.css";
 
 const ADHDForm = () => {
-  const [usn, setUsn] = useState(""); // Added state for USN
+  const [usn, setUsn] = useState(""); // State for USN
   const [responses, setResponses] = useState(Array(18).fill("")); // Initializes an array of 18 empty strings
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [flashMessage, setFlashMessage] = useState(null); // Initialize flashMessage state
+  const [flashMessage, setFlashMessage] = useState(null); // State for flash messages
 
   const questions = [
     "How often do you have trouble wrapping up the final details of a project, once the challenging parts have been done?",
@@ -41,6 +41,11 @@ const ADHDForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!usn) {
+      triggerFlashMessage("Please enter your USN.", "error");
+      return;
+    }
+
     if (responses.includes("")) {
       triggerFlashMessage("Please answer all questions.", "error");
       return;
@@ -57,7 +62,6 @@ const ADHDForm = () => {
 
     const numericalResponses = responses.map((response) => optionToNumber[response]);
 
-    // Fixing the indexing issue: Adjusting to 0-based index
     const sumResponses = (questionIndexes) =>
       questionIndexes.reduce((sum, index) => sum + numericalResponses[index - 1], 0);
 
@@ -80,14 +84,11 @@ const ADHDForm = () => {
     }
 
     try {
-      // Reference to the student document and ADHD responses subcollection
-      const studentRef = doc(db, "students", usn); // Using studentId (e.g., USN) as the document ID
+      // Reference to the specific student's ADHD responses document
+      const adhdResponseRef = doc(db, "students", usn, "adhd_responses", usn);
 
-      // Save ADHD responses in the 'adhd_responses' subcollection of the student
-      const adhdResponseRef = collection(studentRef, "adhd_responses");
-
-      // Adding a new document with the ADHD responses
-      await addDoc(adhdResponseRef, {
+      // Save ADHD responses as the document with the USN as ID
+      await setDoc(adhdResponseRef, {
         responses: numericalResponses,
         parta_score,
         partb_score,
@@ -101,6 +102,7 @@ const ADHDForm = () => {
 
       triggerFlashMessage("Response saved successfully!", "success");
       setResponses(Array(18).fill("")); // Reset responses after submission
+      setUsn(""); // Reset USN input
     } catch (error) {
       console.error("Error saving responses: ", error);
       triggerFlashMessage("Failed to save the response. Please try again.", "error");
@@ -127,7 +129,7 @@ const ADHDForm = () => {
       <h1 className="form-title">ADHD Survey</h1>
       <form onSubmit={handleSubmit} className="dass-form">
         <div className="question-container">
-          <label className="question-text" htmlFor="usn">USN:</label>
+          <label className="question-text" htmlFor="usn">USN</label>
           <input
             type="text"
             id="usn"
