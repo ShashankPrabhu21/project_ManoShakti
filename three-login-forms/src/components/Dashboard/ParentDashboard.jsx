@@ -6,11 +6,12 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 function ParentDashboard() {
   const [usnInput, setUsnInput] = useState('');
   const [studentDetails, setStudentDetails] = useState(null);
-  const [dassResponses, setDassResponses] = useState(null); // State for DASS responses
-  const [adhdResponses, setAdhdResponses] = useState(null); // State for ADHD responses
-  const [fomoResponses, setFomoResponses] = useState(null); // State for FoMO responses
+  const [dassResponses, setDassResponses] = useState(null);
+  const [adhdResponses, setAdhdResponses] = useState(null);
+  const [fomoResponses, setFomoResponses] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [activeSection, setActiveSection] = useState(''); // State to track active section
 
   const handleFetchDetails = async () => {
     if (!usnInput.trim()) {
@@ -22,23 +23,16 @@ function ParentDashboard() {
     setError(null); // Reset error message
 
     try {
-      // Fetch the student document from the 'students' collection
       const studentDocRef = doc(db, 'students', usnInput);
       const studentDocSnap = await getDoc(studentDocRef);
 
       if (studentDocSnap.exists) {
-        // Fetch the 'details' subcollection
         const detailsCollectionRef = collection(studentDocRef, 'details');
         const detailsSnapshot = await getDocs(detailsCollectionRef);
 
         if (!detailsSnapshot.empty) {
           const detailsDoc = detailsSnapshot.docs[0];
           const details = detailsDoc.data();
-
-          console.log('Setting student details:', {
-            usn: usnInput,
-            ...details,
-          });
 
           setStudentDetails({
             usn: usnInput,
@@ -49,50 +43,17 @@ function ParentDashboard() {
           setError(`No details found for student with USN: ${usnInput}`);
         }
 
-        // Fetch the DASS responses from the 'dass_responses' subcollection
         const dassCollectionRef = collection(studentDocRef, 'dass_responses');
         const dassSnapshot = await getDocs(dassCollectionRef);
+        setDassResponses(!dassSnapshot.empty ? dassSnapshot.docs[0].data() : null);
 
-        if (!dassSnapshot.empty) {
-          const dassDoc = dassSnapshot.docs[0];
-          const dassData = dassDoc.data();
-
-          console.log('Setting DASS responses:', dassData);
-          setDassResponses(dassData);
-        } else {
-          setDassResponses(null);
-          setError(`No DASS responses found for student with USN: ${usnInput}`);
-        }
-
-        // Fetch the ADHD responses from the 'adhd_responses' subcollection
         const adhdCollectionRef = collection(studentDocRef, 'adhd_responses');
         const adhdSnapshot = await getDocs(adhdCollectionRef);
+        setAdhdResponses(!adhdSnapshot.empty ? adhdSnapshot.docs[0].data() : null);
 
-        if (!adhdSnapshot.empty) {
-          const adhdDoc = adhdSnapshot.docs[0];
-          const adhdData = adhdDoc.data();
-
-          console.log('Setting ADHD responses:', adhdData);
-          setAdhdResponses(adhdData);
-        } else {
-          setAdhdResponses(null);
-          setError(`No ADHD responses found for student with USN: ${usnInput}`);
-        }
-
-        // Fetch the FoMO responses from the 'fomo_responses' subcollection
         const fomoCollectionRef = collection(studentDocRef, 'fomo_responses');
         const fomoSnapshot = await getDocs(fomoCollectionRef);
-
-        if (!fomoSnapshot.empty) {
-          const fomoDoc = fomoSnapshot.docs[0];
-          const fomoData = fomoDoc.data();
-
-          console.log('Setting FoMO responses:', fomoData);
-          setFomoResponses(fomoData);
-        } else {
-          setFomoResponses(null);
-          setError(`No FoMO responses found for student with USN: ${usnInput}`);
-        }
+        setFomoResponses(!fomoSnapshot.empty ? fomoSnapshot.docs[0].data() : null);
       } else {
         setError(`No student found with USN: ${usnInput}`);
       }
@@ -117,9 +78,7 @@ function ParentDashboard() {
         alignItems: 'center',
         minHeight: '100vh',
         backgroundColor: '#f7f7f7',
-        paddingBottom: '60px',
-        paddingLeft: '1rem',
-        paddingRight: '1rem',
+        padding: '1rem',
       }}
     >
       <Typography variant="h4" gutterBottom>
@@ -144,7 +103,7 @@ function ParentDashboard() {
       {error && <Typography color="error">{error}</Typography>}
 
       {studentDetails && (
-        <Box sx={{ marginTop: '20px', textAlign: 'left' }}>
+        <Box sx={{ marginTop: '20px', textAlign: 'left', width: '100%' }}>
           <Typography variant="h6">Student Details:</Typography>
           <Box sx={{ marginBottom: '10px' }}>
             <Typography><strong>Name:</strong> {studentDetails.name}</Typography>
@@ -155,40 +114,67 @@ function ParentDashboard() {
             <Typography><strong>Email:</strong> {studentDetails.email}</Typography>
             <Typography><strong>Weight:</strong> {studentDetails.weight}</Typography>
           </Box>
-        </Box>
-      )}
 
-      {dassResponses && (
-        <Box sx={{ marginTop: '20px', textAlign: 'left' }}>
-          <Typography variant="h6">DASS Responses:</Typography>
-          <Box sx={{ marginBottom: '10px' }}>
-            <Typography><strong>Anxiety Severity:</strong> {dassResponses.anxietySeverity}</Typography>
-            <Typography><strong>Depression Severity:</strong> {dassResponses.depressionSeverity}</Typography>
-            <Typography><strong>Stress Severity:</strong> {dassResponses.stressSeverity}</Typography>
-            <Typography><strong>Submitted At:</strong> {new Date(dassResponses.submittedAt.seconds * 1000).toLocaleString()}</Typography>
+          {/* Section Buttons */}
+          <Box sx={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => setActiveSection('ADHD')}
+            >
+              ADHD
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => setActiveSection('FoMO')}
+            >
+              FoMO
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => setActiveSection('DASS')}
+            >
+              DASS
+            </Button>
           </Box>
-        </Box>
-      )}
 
-      {adhdResponses && (
-        <Box sx={{ marginTop: '20px', textAlign: 'left' }}>
-          <Typography variant="h6">ADHD Responses:</Typography>
-          <Box sx={{ marginBottom: '10px' }}>
-            <Typography><strong>Classification:</strong> {adhdResponses.classification}</Typography>
-            <Typography><strong>Submitted At:</strong> {new Date(adhdResponses.submittedAt.seconds * 1000).toLocaleString()}</Typography>
-          </Box>
-        </Box>
-      )}
+          {/* Conditional Rendering of Sections */}
+          {activeSection === 'ADHD' && adhdResponses && (
+            <Box sx={{ marginTop: '20px' }}>
+              <Typography variant="h6">ADHD Responses:</Typography>
+              <Typography><strong>Classification:</strong> {adhdResponses.classification}</Typography>
+              <Typography>
+                <strong>Submitted At:</strong>{' '}
+                {new Date(adhdResponses.submittedAt.seconds * 1000).toLocaleString()}
+              </Typography>
+            </Box>
+          )}
 
-      {fomoResponses && (
-        <Box sx={{ marginTop: '20px', textAlign: 'left' }}>
-          <Typography variant="h6">FoMO Responses:</Typography>
-          <Box sx={{ marginBottom: '10px' }}>
-            <Typography><strong>Classification:</strong> {fomoResponses.classification}</Typography>
-            
-            <Typography><strong>Submitted At:</strong> {new Date(fomoResponses.submittedAt.seconds * 1000).toLocaleString()}</Typography>
-            
-          </Box>
+          {activeSection === 'FoMO' && fomoResponses && (
+            <Box sx={{ marginTop: '20px' }}>
+              <Typography variant="h6">FoMO Responses:</Typography>
+              <Typography><strong>Classification:</strong> {fomoResponses.classification}</Typography>
+              <Typography>
+                <strong>Submitted At:</strong>{' '}
+                {new Date(fomoResponses.submittedAt.seconds * 1000).toLocaleString()}
+              </Typography>
+            </Box>
+          )}
+
+          {activeSection === 'DASS' && dassResponses && (
+            <Box sx={{ marginTop: '20px' }}>
+              <Typography variant="h6">DASS Responses:</Typography>
+              <Typography><strong>Anxiety Severity:</strong> {dassResponses.anxietySeverity}</Typography>
+              <Typography><strong>Depression Severity:</strong> {dassResponses.depressionSeverity}</Typography>
+              <Typography><strong>Stress Severity:</strong> {dassResponses.stressSeverity}</Typography>
+              <Typography>
+                <strong>Submitted At:</strong>{' '}
+                {new Date(dassResponses.submittedAt.seconds * 1000).toLocaleString()}
+              </Typography>
+            </Box>
+          )}
         </Box>
       )}
     </Box>
