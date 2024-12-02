@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { auth, db } from '../../firebaseConfig'; // Firebase config
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore'; // Firestore functions
 import { useNavigate, Link } from 'react-router-dom';
 import {
@@ -42,27 +42,6 @@ function ParentLogin({ handleAuthentication }) {
       }
     } catch (error) {
       setError(error.message);
-    }
-  };
-
-  const handleForgotPassword = async () => {
-    if (!email) {
-      setError('Please enter your email to reset your password.');
-      return;
-    }
-
-    try {
-      // Send a password reset email
-      await sendPasswordResetEmail(auth, email);
-      setSnackbarMessage('Password reset email sent. Check your inbox.');
-    } catch (error) {
-      if (error.code === 'auth/user-not-found') {
-        setError('No user found with this email.');
-      } else if (error.code === 'auth/invalid-email') {
-        setError('Invalid email format. Please check and try again.');
-      } else {
-        setError('An error occurred while sending the reset email. Please try again later.');
-      }
     }
   };
 
@@ -110,7 +89,7 @@ function ParentLogin({ handleAuthentication }) {
         color="secondary"
         fullWidth
         sx={{ mt: 1 }}
-        onClick={handleForgotPassword}
+        onClick={() => navigate('/forgot-password/parent')} // Navigate to Forgot Password Page
       >
         Forgot Password?
       </Button>

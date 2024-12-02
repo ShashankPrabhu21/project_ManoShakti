@@ -20,6 +20,8 @@ import StudentDashboard from './components/Dashboard/StudentDashboard';
 import ParentDashboard from './components/Dashboard/ParentDashboard'; 
 import CounselorDashboard from './components/Dashboard/CounselorDashboard'; 
 
+import StudentDetailsPage from './components/Dashboard/StudentDetailsPage';
+
 import MainLayout from './components/Home/MainLayout'; // Import MainLayout component
 
 function App() {
@@ -61,6 +63,9 @@ function App() {
           <Route path="/student-dashboard" element={authenticated && userType === 'student' ? <StudentDashboard /> : <Navigate to="/" />} />
           <Route path="/parent-dashboard" element={authenticated && userType === 'parent' ? <ParentDashboard /> : <Navigate to="/" />} />
           <Route path="/counselor-dashboard" element={authenticated && userType === 'counselor' ? <CounselorDashboard /> : <Navigate to="/" />} />
+
+          <Route path="/student-details" element={<StudentDetailsPage />} />
+
 
           {/* Catch-all route */}
           <Route path="*" element={<Navigate to="/" />} />

@@ -19,7 +19,6 @@ function StudentLogin({ handleAuthentication }) {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const navigate = useNavigate(); // Hook for navigation
 
-  // Clear error and snackbar messages when closing the Snackbar
   const handleCloseSnackbar = () => {
     setError('');
     setSnackbarMessage('');
@@ -30,26 +29,25 @@ function StudentLogin({ handleAuthentication }) {
     setError(''); // Reset any existing error message
 
     try {
-      // Sign in with email and password using Firebase Authentication
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Trigger authentication and navigate to student dashboard
       handleAuthentication(true, 'student');
-      navigate('/student-dashboard'); // Navigate to the student dashboard
+      navigate('/student-dashboard');
     } catch (error) {
-      // Firebase-specific error handling
-      if (error.code === 'auth/user-not-found') {
-        setError('No user found with this email.');
-      } else if (error.code === 'auth/wrong-password') {
-        setError('Incorrect password. Please try again.');
-      } else if (error.code === 'auth/invalid-email') {
-        setError('Invalid email format. Please check and try again.');
+
+
+      if (error.code === 'auth/invalid-credential') {
+        setError('Please check the email or password.');
+      } else if (error.code === 'auth/too-many-requests') {
+        setError('Too many login attempts. Please wait a moment before trying again.');
       } else {
-        setError('An error occurred during login. Please try again later.');
+        console.error('Unexpected error during login:', error);
+        setError('An unexpected error occurred. Please try again later.');
       }
     }
   };
+
 
   const handleForgotPassword = async () => {
     if (!email) {
@@ -59,89 +57,97 @@ function StudentLogin({ handleAuthentication }) {
 
     try {
       await sendPasswordResetEmail(auth, email);
-      setSnackbarMessage('Password reset email sent. Check your inbox.');
+      setSnackbarMessage('Password reset email sent successfully. Please check your inbox and spam folder.');
     } catch (error) {
-      if (error.code === 'auth/user-not-found') {
-        setError('No user found with this email.');
-      } else if (error.code === 'auth/invalid-email') {
-        setError('Invalid email format. Please check and try again.');
-      } else {
-        setError('An error occurred while sending the reset email. Please try again later.');
+      switch (error.code) {
+        case 'auth/user-not-found':
+          setError('No user is registered with this email. Please check your email address or register first.');
+          break;
+        case 'auth/invalid-email':
+          setError('The email address you entered is invalid. Please enter a valid email.');
+          break;
+        case 'auth/network-request-failed':
+          setError('Network error occurred. Please check your internet connection and try again.');
+          break;
+        case 'auth/too-many-requests':
+          setError('Too many requests. Please wait a moment before trying again.');
+          break;
+        default:
+          console.error('Unexpected error during password reset:', error);
+          setError('An unexpected error occurred. Please try again later.');
       }
     }
   };
 
   return (
-    <>
-      <Container maxWidth="xs">
-        <Box sx={{ mt: 4, mb: 2 }}>
-          <Typography variant="h4" align="center">
-            Student Login
-          </Typography>
-        </Box>
-        <form onSubmit={handleLogin}>
-          <TextField
-            label="Email"
-            type="email"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <TextField
-            label="Password"
-            type="password"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{ mt: 2 }}
-          >
-            Login
-          </Button>
-        </form>
-
-        <Button
-          variant="text"
-          color="secondary"
-          fullWidth
-          sx={{ mt: 1 }}
-          onClick={handleForgotPassword}
-        >
-          Forgot Password?
-        </Button>
-
-        {/* Display error or success messages using Snackbar */}
-        <Snackbar
-          open={Boolean(error || snackbarMessage)}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        >
-          <Alert
-            onClose={handleCloseSnackbar}
-            severity={error ? 'error' : 'success'}
-            sx={{ width: '100%' }}
-          >
-            {error || snackbarMessage}
-          </Alert>
-        </Snackbar>
-
-        <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-          New here? <Link to="/register/student">Register as a Student</Link>
+    <Container maxWidth="xs">
+      <Box sx={{ mt: 4, mb: 2 }}>
+        <Typography variant="h4" align="center">
+          Student Login
         </Typography>
-      </Container>
-    </>
+      </Box>
+      <form onSubmit={handleLogin}>
+        <TextField
+          label="Email"
+          type="email"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <TextField
+          label="Password"
+          type="password"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ mt: 2 }}
+        >
+          Login
+        </Button>
+      </form>
+
+      
+      <Button
+  variant="text"
+  color="secondary"
+  fullWidth
+  sx={{ mt: 1 }}
+  onClick={() => navigate('/forgot-password')} // Navigate to the forgot password page
+>
+  Forgot Password?
+</Button>
+
+      <Snackbar
+        open={Boolean(error || snackbarMessage)}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={error ? 'error' : 'success'}
+          sx={{ width: '100%' }}
+        >
+          {error || snackbarMessage}
+        </Alert>
+      </Snackbar>
+
+      <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+        New here? <Link to="/register/student">Register as a Student</Link>
+      </Typography>
+    </Container>
   );
 }
 
